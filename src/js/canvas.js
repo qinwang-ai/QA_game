@@ -21,6 +21,11 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_error'+'","path":'+'"images/btn_error.png"},';
 	json_str += '{"name":"'+'btn_right'+'","path":'+'"images/btn_right.png"},';
 	json_str += '{"name":"'+'btn_nor'+'","path":'+'"images/btn_nor.png"},';
+	json_str += '{"name":"'+'btn_nor_error'+'","path":'+'"images/btn_nor_error.png"},';
+	json_str += '{"name":"'+'btn_nor_right'+'","path":'+'"images/btn_nor_right.png"},';
+	json_str += '{"name":"'+'btn_sel_error'+'","path":'+'"images/btn_sel_error.png"},';
+	json_str += '{"name":"'+'btn_sel_right'+'","path":'+'"images/btn_sel_right.png"},';
+	json_str += '{"name":"'+'game_paper'+'","path":'+'"images/game_paper.png"},';
 	json_str+='])';
 	var imgs_DATA = eval( json_str);
 	loadingLayer = new LoadingSample3();
@@ -41,6 +46,22 @@ function load_complete( result){
 	showList_part1.push( new LBitmapData( result["btn_nor"]));
 	showList_part1.push( new LBitmapData( result["btn_right"]));
 	showList_part1.push( new LBitmapData( result["btn_error"]));
+
+	//push to showlist  part2
+	showList_part2.push( new LBitmapData( result["btn_nor_right"]));
+	showList_part2.push( new LBitmapData( result["btn_nor_error"]));
+	showList_part2.push( new LBitmapData( result["btn_sel_right"]));
+	showList_part2.push( new LBitmapData( result["btn_sel_error"]));
+
+	//push to showlist  part2
+	showList_part3.push( new LBitmapData( result["game_paper"]));
+//	showList_part3.push( new LBitmapData( result["btn_nor_error"]));
+//	showList_part3.push( new LBitmapData( result["btn_sel_right"]));
+//	showList_part3.push( new LBitmapData( result["btn_sel_error"]));
+
+
+
+
 	build_background();
 }
 function build_background(){
@@ -51,10 +72,10 @@ function build_background(){
 	back_layer.addChild( back_Bitmap);
 
 	title_Bitmap = new LBitmap( showList_back[1]);
-	title_Bitmap.scaleX = global_width/showList_back[1].width*0.85;
-	title_Bitmap.scaleY = global_height/showList_back[1].height*0.14;
-	title_Bitmap.x = global_width*0.07;
-	title_Bitmap.y = global_height*0.23;
+	title_Bitmap.scaleX = global_width/showList_back[1].width*0.85;		//w
+	title_Bitmap.scaleY = global_height/showList_back[1].height*0.14;	//h
+	title_Bitmap.x = global_width*0.07; //xi
+	title_Bitmap.y = global_height*0.23; //yi
 	back_layer.addChild( title_Bitmap);
 
 	start_layer = new LSprite();
@@ -96,6 +117,7 @@ function startPart1(){
 	game_blackboard_Bitmap.y = global_height*0.15;	//yi
 	back_layer.addChild( game_blackboard_Bitmap);
 
+//four layer
 	option1 = new LSprite();
 	option2 = new LSprite();
 	option3 = new LSprite();
@@ -115,6 +137,7 @@ function startPart1(){
 	option4.x = global_width*0.52;		//xi
 	option4.y = global_height*0.57;	//yi
 
+//four bitmap
 //A
 	btn_nor_Bitmap = new LBitmap( showList_part1[1]);
 	btn_nor_Bitmap.scaleX = global_width/showList_part1[1].width*0.44;		//w
@@ -137,17 +160,100 @@ function startPart1(){
 	btn_nor_Bitmap.scaleY = global_height/showList_part1[1].height*0.09;	//h
 	option4.addChild( btn_nor_Bitmap);
 
+//four text field
+	field1 = new LTextField();
+	field2 = new LTextField();
+	field3 = new LTextField();
+	field4 = new LTextField();
+
+	//field1.size = global_width/
+
+	field1.text = "132";
+	field2.text = "132";
+	field3.text = "132";
+	field4.text = "132";
+
+	back_layer.addChild(field1);
+	back_layer.addChild(field2);
+	back_layer.addChild(field3);
+	back_layer.addChild(field4);
+
 //add option mouse event listener
 
 
 }
 
 function startPart2(){
-	back_layer.removeChild( game_blackboard_Bitmap);
 	back_layer.removeChild( option1);
 	back_layer.removeChild( option2);
 	back_layer.removeChild( option3);
 	back_layer.removeChild( option4);
+	back_layer.removeChild( field1);
+	back_layer.removeChild( field2);
+	back_layer.removeChild( field3);
+	back_layer.removeChild( field4);
+
+
+	option1 = new LSprite();
+	option2 = new LSprite();
+
+	back_layer.addChild( option1);
+	back_layer.addChild( option2);
+
+	option1.x = global_width*0.29;		//xi
+	option1.y = global_height*0.45;	//yi
+	option2.x = global_width*0.29;		//xi
+	option2.y = global_height*0.57;	//yi
+
+//bitmap
+//A
+	btn_nor_Bitmap = new LBitmap( showList_part2[0]);
+	btn_nor_Bitmap.scaleX = global_width/showList_part2[0].width*0.44;		//w
+	btn_nor_Bitmap.scaleY = global_height/showList_part2[0].height*0.09;	//h
+	option1.addChild( btn_nor_Bitmap);
+//B
+	btn_nor_Bitmap = new LBitmap( showList_part2[1]);
+	btn_nor_Bitmap.scaleX = global_width/showList_part2[1].width*0.44;		//w
+	btn_nor_Bitmap.scaleY = global_height/showList_part2[1].height*0.09;	//h
+	option2.addChild( btn_nor_Bitmap);
+
+//text field
+	field1 = new LTextField();
+	field2 = new LTextField();
+
+	//field1.size = global_width/
+
+	field1.text = "132";
+	field2.text = "132";
+
+	back_layer.addChild(field1);
+	back_layer.addChild(field2);
+
+//add option mouse event listener
+}
+
+function startPart3(){
+	back_layer.removeChild( game_blackboard_Bitmap);
+	back_layer.removeChild( option1);
+	back_layer.removeChild( option2);
+	back_layer.removeChild( field1);
+	back_layer.removeChild( field2);
+
+
+	//bitmap
+	gamepaper_Bitmap = new LBitmap( showList_part3[0]);
+	gamepaper_Bitmap.scaleX = global_width/showList_part3[0].width*0.88;		//w
+	gamepaper_Bitmap.scaleY = global_height/showList_part3[0].height*0.56;	//h
+	gamepaper_Bitmap.x = global_width*0.004;		//xi
+	gamepaper_Bitmap.y = global_height*0.18;	//yi
+	back_layer.addChild( gamepaper_Bitmap);
+
+	//text
+	game_text = new LTextField()
+	game_text.text = '123';
+
+
+	back_layer.addChild( game_text);
 }
 
 
@@ -261,5 +367,8 @@ function main(){
 //=======================================DATA============
 showList_back = new Array();
 showList_part1 = new Array();
+showList_part2 = new Array();
+showList_part3 = new Array();
+showList_part4 = new Array();
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
 //=======================================DATA END ===========
