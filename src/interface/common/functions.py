@@ -256,7 +256,8 @@ def verify_netid(login_name, login_pwd, res):
     """
     # res['status'] = StatusCode.INVALID_USERNAME
     # res['info']  = ErrorMsg[res['status']]
-    return '2'
+    import uuid
+    return uuid.uuid1().hex
 
 @log_decorator
 def _user_exists(conn, login_name, login_pwd):

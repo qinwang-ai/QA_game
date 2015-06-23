@@ -20,8 +20,7 @@ class MainHandler(tornado.web.RequestHandler):
             args = dict()
             for key in self.request.arguments:
                 if key == method: continue
-                args[key] = self.get_argument()
-            args = self.get_arguments() 
+                args[key] = self.get_argument(key)
             # eval the request
             res = eval(method)(args) 
         self.write(dumps(res))
@@ -31,5 +30,4 @@ if __name__ == "__main__":
     options.parse_command_line()
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
-
 
