@@ -26,11 +26,29 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_sel_error'+'","path":'+'"images/btn_sel_error.png"},';
 	json_str += '{"name":"'+'btn_sel_right'+'","path":'+'"images/btn_sel_right.png"},';
 	json_str += '{"name":"'+'game_paper'+'","path":'+'"images/game_paper.png"},';
+	json_str += '{"name":"'+'login_background'+'","path":'+'"images/login_background.png"},';
+	json_str += '{"name":"'+'btn_login2'+'","path":'+'"images/btn_login2.png"},';
+	json_str += '{"name":"'+'input_netid'+'","path":'+'"images/input_netid.png"},';
+	json_str += '{"name":"'+'input_password'+'","path":'+'"images/input_password.png"},';
+	json_str += '{"name":"'+'input_number'+'","path":'+'"images/input_number.png"},';
+	json_str += '{"name":"'+'puzzle_background'+'","path":'+'"images/puzzle_background.png"},';
+	json_str += '{"name":"'+'btn_OK'+'","path":'+'"images/btn_OK.png"},';
+	json_str += '{"name":"'+'btn_right2'+'","path":'+'"images/btn_right2.png"},';
+	json_str += '{"name":"'+'btn_error2'+'","path":'+'"images/btn_error2.png"},';
+	json_str += '{"name":"'+'background_flash'+'","path":'+'"images/background_flash.png"},';
+	json_str += '{"name":"'+'background_foot'+'","path":'+'"images/background_foot.png"},';
+	json_str += '{"name":"'+'result'+'","path":'+'"images/background_result.png"},';
+	json_str += '{"name":"'+'btn_foucs'+'","path":'+'"images/btn_focus.png"},';
+	json_str += '{"name":"'+'btn_share'+'","path":'+'"images/btn_share.png"},';
+	json_str += '{"name":"'+'share'+'","path":'+'"images/share.png"},';
 	json_str+='])';
+
 	var imgs_DATA = eval( json_str);
 	loadingLayer = new LoadingSample3();
+	back_layer.addChild( loadingLayer);
 	LLoadManage.load( imgs_DATA, function ( progress){
-		loadingLayer.setProgress(progress)},load_char_C);
+		loadingLayer.setProgress(progress)},load_char_C
+	);
 }
 
 function load_complete( result){
@@ -40,6 +58,14 @@ function load_complete( result){
 	showList_back.push( new LBitmapData( result["home_btn_star"]));
 	showList_back.push( new LBitmapData( result["background_board"]));
 	showList_back.push( new LBitmapData( result["btn_login"]));
+
+	//login_background
+	showList_back.push( new LBitmapData( result["login_background"]));
+	showList_back.push( new LBitmapData( result["btn_login2"]));
+	showList_back.push( new LBitmapData( result["input_netid"]));
+	showList_back.push( new LBitmapData( result["input_password"]));
+	showList_back.push( new LBitmapData( result["input_number"]));
+
 
 	//push to showlist  part1
 	showList_part1.push( new LBitmapData( result["game_blackboard"]));
@@ -53,13 +79,22 @@ function load_complete( result){
 	showList_part2.push( new LBitmapData( result["btn_sel_right"]));
 	showList_part2.push( new LBitmapData( result["btn_sel_error"]));
 
-	//push to showlist  part2
+	//push to showlist  part3
 	showList_part3.push( new LBitmapData( result["game_paper"]));
-//	showList_part3.push( new LBitmapData( result["btn_nor_error"]));
-//	showList_part3.push( new LBitmapData( result["btn_sel_right"]));
-//	showList_part3.push( new LBitmapData( result["btn_sel_error"]));
 
+	//push to showlist PART4
+	showList_part4.push( new LBitmapData( result["puzzle_background"]));
+	showList_part4.push( new LBitmapData( result["btn_OK"]));
+	showList_part4.push( new LBitmapData( result["btn_right2"]));
+	showList_part4.push( new LBitmapData( result["btn_error2"]));
 
+	//push to showlist game_over
+
+	showList_over.push( new LBitmapData( result["background_flash"]));
+	showList_over.push( new LBitmapData( result["background_foot"]));
+	showList_over.push( new LBitmapData( result["btn_foucs"]));
+	showList_over.push( new LBitmapData( result["btn_share"]));
+	showList_over.push( new LBitmapData( result["share"]));
 
 
 	build_background();
@@ -98,18 +133,121 @@ function gameintro( event){
 	background_board_Bitmap.y = global_height*0.2;	//yi
 	back_layer.addChild( background_board_Bitmap);
 
+	btn_login_layer = new LSprite();
+	back_layer.addChild( btn_login_layer);
+	btn_login_layer.x = global_width*0.35;		//xi
+	btn_login_layer.y = global_height*0.64;	//yi
 	btn_login_Bitmap = new LBitmap( showList_back[4]);
 	btn_login_Bitmap.scaleX = global_width/showList_back[4].width*0.32;		//w
 	btn_login_Bitmap.scaleY = global_height/showList_back[4].height*0.11;	//h
-	btn_login_Bitmap.x = global_width*0.35;		//xi
-	btn_login_Bitmap.y = global_height*0.64;	//yi
-	back_layer.addChild( btn_login_Bitmap);
+	btn_login_layer.addChild( btn_login_Bitmap);
+	btn_login_layer.addEventListener( LMouseEvent.MOUSE_DOWN, gamelogin);
 	//##############################################################################################
 }
-function startPart1(){
-	back_layer.removeChild( btn_login_Bitmap);
+function gamelogin(){
+	back_layer.removeChild( btn_login_layer);
 	back_layer.removeChild( background_board_Bitmap);
 
+	login_background_Bitmap = new LBitmap( showList_back[5]);
+	login_background_Bitmap.scaleX = global_width/showList_back[5].width*1;		//w
+	login_background_Bitmap.scaleY = global_height/showList_back[5].height*0.54;	//h
+	login_background_Bitmap.x = global_width*0;		//xi
+	login_background_Bitmap.y = global_height*0.19;	//yi
+	back_layer.addChild( login_background_Bitmap);
+
+//btn_Login
+	btn_login2_layer = new LSprite();
+	back_layer.addChild( btn_login2_layer);
+	btn_login2_Bitmap = new LBitmap( showList_back[6]);
+	btn_login2_Bitmap.scaleX = global_width/showList_back[6].width*0.34;		//w
+	btn_login2_Bitmap.scaleY = global_height/showList_back[6].height*0.10;	//h
+	btn_login2_layer.x = global_width*0.30;		//xi
+	btn_login2_layer.y = global_height*0.60;	//yi
+	btn_login2_layer.addChild( btn_login2_Bitmap);
+	btn_login2_layer.addEventListener( LMouseEvent.MOUSE_DOWN, check_auth);
+
+//form
+	//bitmap
+	login_input_Bitmap1 = new LBitmap( showList_back[7]);
+	login_input_Bitmap1.scaleX = global_width/showList_back[7].width*0.83;		//w
+	login_input_Bitmap1.scaleY = global_height/showList_back[7].height*0.06;	//h
+	login_input_Bitmap1.x = global_width*0.08;		//xi
+	login_input_Bitmap1.y = global_height*0.26;	//yi
+	back_layer.addChild( login_input_Bitmap1);
+
+	login_input_Bitmap2 = new LBitmap( showList_back[8]);
+	login_input_Bitmap2.scaleX = global_width/showList_back[8].width*0.83;		//w
+	login_input_Bitmap2.scaleY = global_height/showList_back[8].height*0.06;	//h
+	login_input_Bitmap2.x = global_width*0.08;		//xi
+	login_input_Bitmap2.y = global_height*0.35;	//yi
+	back_layer.addChild( login_input_Bitmap2);
+
+	login_input_Bitmap3 = new LBitmap( showList_back[9]);
+	login_input_Bitmap3.scaleX = global_width/showList_back[9].width*0.83;		//w
+	login_input_Bitmap3.scaleY = global_height/showList_back[9].height*0.06;	//h
+	login_input_Bitmap3.x = global_width*0.08;		//xi
+	login_input_Bitmap3.y = global_height*0.44;	//yi
+	back_layer.addChild( login_input_Bitmap3);
+	//text
+
+	net_id = new LTextField();
+	psw = new LTextField();
+	phone = new LTextField();
+	net_id.x = Math.round( global_width*0.32);
+	net_id.y = Math.round( global_height*0.28);
+	psw.x = Math.round( global_width*0.32);
+	psw.y = Math.round( global_height*0.36);
+	phone.x = Math.round( global_width*0.32);
+	phone.y = Math.round( global_height*0.45);
+	net_id.text = '12';
+	psw.text = '123';
+	phone.text = '1234';
+
+	var inputLayer1 = new LSprite();
+	var inputLayer2 = new LSprite();
+	var inputLayer3 = new LSprite();
+	inputLayer1.graphics.drawRect(0,"#000000",[0, -global_height*0.008, global_width*0.6, global_height*0.05]);
+	inputLayer2.graphics.drawRect(0,"#000000",[0, -global_height*0.008, global_width*0.6, global_height*0.05]);
+	inputLayer3.graphics.drawRect(0,"#000000",[0,-global_height*0.008, global_width*0.6, global_height*0.05]);
+	net_id.setType(LTextFieldType.INPUT, inputLayer1);
+	psw.setType(LTextFieldType.INPUT, inputLayer2);
+	phone.setType(LTextFieldType.INPUT, inputLayer3);
+	psw.displayAsPassword = true;
+	net_id.size = global_width*0.05;
+	psw.size = global_width*0.05;
+	phone.size = global_width*0.05;
+
+	back_layer.addChild( net_id);
+	back_layer.addChild( psw);
+	back_layer.addChild( phone);
+}
+function check_auth(){
+	console.log('login');
+	/*
+	$.post( Ajax_URL,{NetId:net_id.text,Psw:psw.text,Phone:phone.text},function(result){
+
+ 	});
+	*/
+	start_game = 1;
+}
+//#############################################PART1
+function startPart1(){
+	back_layer.removeChild( login_background_Bitmap);
+	back_layer.removeChild( btn_login2_layer);
+	back_layer.removeChild( net_id);
+	back_layer.removeChild( psw);
+	back_layer.removeChild( phone);
+	back_layer.removeChild( login_input_Bitmap1);
+	back_layer.removeChild( login_input_Bitmap2);
+	back_layer.removeChild( login_input_Bitmap3);
+	build_part1();
+//add option mouse event listener
+	option1.addEventListener( LMouseEvent.MOUSE_DOWN, part1o1check);
+	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part1o2check);
+	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part1o3check);
+	option4.addEventListener( LMouseEvent.MOUSE_DOWN, part1o4check);
+}
+function build_part1(){
 	game_blackboard_Bitmap = new LBitmap( showList_part1[0]);
 	game_blackboard_Bitmap.scaleX = global_width/showList_part1[0].width*0.88;		//w
 	game_blackboard_Bitmap.scaleY = global_height/showList_part1[0].height*0.27;	//h
@@ -160,6 +298,16 @@ function startPart1(){
 	btn_nor_Bitmap.scaleY = global_height/showList_part1[1].height*0.09;	//h
 	option4.addChild( btn_nor_Bitmap);
 
+//question text
+	question_text = new LTextField();
+	question_text.x = global_width*0.13;
+	question_text.y = global_height*0.24;
+	question_text.text = '345';
+	back_layer.addChild( question_text);
+	question_text.color = "#FFF";
+	question_text.size = global_width*0.06;
+
+
 //four text field
 	field1 = new LTextField();
 	field2 = new LTextField();
@@ -167,22 +315,47 @@ function startPart1(){
 	field4 = new LTextField();
 
 	//field1.size = global_width/
+	field1.x = global_width*0.07;		//xi
+	field1.y = global_height*0.47;		//yi
 
+	field2.x = global_width*0.54;		//xi
+	field2.y = global_height*0.47;		//yi
+
+	field3.x = global_width*0.07;		//xi
+	field3.y = global_height*0.59;		//yi
+
+	field4.x = global_width*0.54;		//xi
+	field4.y = global_height*0.59;		//yi
 	field1.text = "132";
 	field2.text = "132";
 	field3.text = "132";
 	field4.text = "132";
 
+	field1.color = "#FFF";
+	field2.color = "#FFF";
+	field3.color = "#FFF";
+	field4.color = "#FFF";
+
 	back_layer.addChild(field1);
 	back_layer.addChild(field2);
 	back_layer.addChild(field3);
 	back_layer.addChild(field4);
-
-//add option mouse event listener
-
-
 }
 
+function part1o1check(event){
+	console.log(event);
+}
+function part1o2check(event){
+	console.log(event);
+}
+function part1o3check(event){
+	console.log(event);
+}
+function part1o4check(event){
+	console.log(event);
+}
+
+//#############################################PART2
 function startPart2(){
 	back_layer.removeChild( option1);
 	back_layer.removeChild( option2);
@@ -217,27 +390,26 @@ function startPart2(){
 	btn_nor_Bitmap.scaleY = global_height/showList_part2[1].height*0.09;	//h
 	option2.addChild( btn_nor_Bitmap);
 
-//text field
-	field1 = new LTextField();
-	field2 = new LTextField();
-
-	//field1.size = global_width/
-
-	field1.text = "132";
-	field2.text = "132";
-
-	back_layer.addChild(field1);
-	back_layer.addChild(field2);
 
 //add option mouse event listener
+	option1.addEventListener( LMouseEvent.MOUSE_DOWN, part2o1check);
+	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part2o2check);
+}
+function part2o1check(){
+
+}
+function part2o2check(){
+
 }
 
+//######################################################PART3
 function startPart3(){
 	back_layer.removeChild( game_blackboard_Bitmap);
 	back_layer.removeChild( option1);
 	back_layer.removeChild( option2);
 	back_layer.removeChild( field1);
 	back_layer.removeChild( field2);
+	back_layer.removeChild( question_text);
 
 
 	//bitmap
@@ -250,10 +422,108 @@ function startPart3(){
 
 	//text
 	game_text = new LTextField()
-	game_text.text = '123';
-
+	game_text.text = 'readtext';
 
 	back_layer.addChild( game_text);
+	setTimeout( 'startPart3_write()', Read_TIME);
+}
+function startPart3_write(){
+	back_layer.removeChild( game_text);
+	back_layer.removeChild( gamepaper_Bitmap);
+	build_part1();
+	//add option mouse event listener
+	option1.addEventListener( LMouseEvent.MOUSE_DOWN, part3o1check);
+	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part3o2check);
+	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part3o3check);
+	option4.addEventListener( LMouseEvent.MOUSE_DOWN, part3o4check);
+}
+function part3o1check(event){
+
+}
+
+function part3o2check(event){
+
+}
+
+function part3o3check(event){
+
+}
+
+function part3o4check(event){
+
+}
+
+
+
+
+//##############################################PART4
+function startPart4(){
+	back_layer.removeChild( option1);
+	back_layer.removeChild( option2);
+	back_layer.removeChild( option3);
+	back_layer.removeChild( option4);
+	back_layer.removeChild( field1);
+	back_layer.removeChild( field2);
+	back_layer.removeChild( field3);
+	back_layer.removeChild( field4);
+	back_layer.removeChild( game_blackboard_Bitmap);
+
+
+	puzzle_Bitmap = new LBitmap( showList_part4[0]);
+	puzzle_Bitmap.scaleX = global_width/showList_part4[0].width*0.91;		//w
+	puzzle_Bitmap.scaleY = global_height/showList_part4[0].height*0.58;	//h
+	puzzle_Bitmap.x = global_width*0.05; //xi
+	puzzle_Bitmap.y = global_height*0.15; //yi
+	back_layer.addChild( puzzle_Bitmap);
+
+	btnOK_Bitmap = new LBitmap( showList_part4[1]);
+	btnOK_Bitmap.scaleX = global_width/showList_part4[1].width*0.21;		//w
+	btnOK_Bitmap.scaleY = global_height/showList_part4[1].height*0.13;	//h
+	btnOK_Bitmap.x = global_width*0.29; //xi
+	btnOK_Bitmap.y = global_height*0.75; //yi
+	back_layer.addChild( btnOK_Bitmap);
+}
+function game_over(){
+	//remove
+	back_layer.removeChild( btnOK_Bitmap);
+	back_layer.removeChild( puzzle_Bitmap);
+
+	//add
+
+	question_text.text = 'gameover';
+	btn_foucs_layer = new LSprite();
+	btn_foucs_layer.x = global_width*0.05; //xi
+	btn_foucs_layer.y = global_height*0.15; //yi
+
+	btn_share_layer = new LSprite();
+	btn_share_layer.x = global_width*0.05; //xi
+	btn_share_layer.y = global_height*0.15; //yi
+
+	btn_foucs_Bitmap = new LBitmap( showList_over[2]);
+	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.91;		//w
+	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.58;	//h
+	btn_foucs_layer.addChild( btn_foucs_Bitmap);
+
+	btn_share_Bitmap = new LBitmap( showList_over[3]);
+	btn_share_Bitmap.scaleX = global_width/showList_over[3].width*0.91;		//w
+	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.58;	//h
+	btn_share_layer.addChild( btn_share_Bitmap);
+	//addEventListener
+	back_layer.addChild( btn_foucs_layer);
+	back_layer.addChild( btn_share_layer);
+
+//	btn_foucs_layer.addEventListener( LMouseEvent.MOUSE_DOWN, fou)
+	btn_share_layer.addEventListener( LMouseEvent.MOUSE_DOWN, game_share);
+}
+
+function game_share(){
+	//remove
+	back_layer.removeAllChild();
+	//add
+	back_Bitmap = new LBitmap( showList_over[4]);
+	back_Bitmap.scaleX = global_width/showList_over[4].width;
+	back_Bitmap.scaleY = global_height/showList_over[4].height;
+	back_layer.addChild( back_Bitmap);
 }
 
 
@@ -292,41 +562,53 @@ function startPart3(){
 
 
 
-function display_global_now(){
-	if( ( statusA !=4 || statusB !=4) && mark_collide == 1){
-		statusB = 4;
-		statusA = 4;
-	}
-	if( sum_x == 24){
-		statusA = 3;
-	}
 
-	if( start_game == 0 && white_layer.y != 50){
-		back_layer.visible = false;
-		white_layer.y = 50;
-		point_white = 0;
-		white_layer.addEventListener( LEvent.ENTER_FRAME, display_white_now);
-	}else{
-		if( back_layer.visible == false && start_game == 1){
-			back_layer.visible = true;
-			white_layer.removeAllChild();
-			white_layer.removeEventListener( LEvent.ENTER_FRAME, display_white_now);
-			sound.play( 0, Infinity);
-		}
-	}
-}
-function display_white_now(){
-	point_white ++;
-	if(point_white < parseInt( preStart_json['s'])){
-		point_white = parseInt( preStart_json['s']);
-	}
-	if(point_white > parseInt( preStart_json['t'])){
-		point_white = parseInt( preStart_json['s']);
-	}
-	var now_showBitmap = new LBitmap( showListA[ point_white]);
-	white_layer.removeAllChild();
-	white_layer.addChild( now_showBitmap);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //==============================
 function sms (str) {
@@ -335,6 +617,9 @@ function sms (str) {
   var ans =(min * 60 + sed) * 1000;
   return ans;
 }
+
+//controller_frame
+
 function controller_frame(){
 	if( start_game == 1){
 		startPart1();
@@ -350,6 +635,10 @@ function controller_frame(){
 	}
 	if( start_game == 4){
 		startPart4();
+		start_game = 0;
+	}
+	if( start_game == 5){
+		game_over();
 		start_game = 0;
 	}
 }
@@ -370,5 +659,8 @@ showList_part1 = new Array();
 showList_part2 = new Array();
 showList_part3 = new Array();
 showList_part4 = new Array();
+showList_over = new Array();
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
+Ajax_URL = 'l';
+Read_TIME = 1000;//milliseconds
 //=======================================DATA END ===========
