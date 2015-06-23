@@ -5,64 +5,61 @@ import torndb
 from common.functions  import *
 from config.base import *
 
-def _verify_netid(name, pwd):
-    return '2'
-
 def login_handler(kwargs):
+    """
+    登陆验证处理,返回的一个字典，包括:
+    status表示处理状态，用于前端错误处理
+    info　错误状态码对应的错误信息描述
+    data 内容主体,包括第一道题和token
+    >>> # 没有token
+    >>> params = {  'netid': '1', 'pwd': '1', 'phone_num': '13824413780', 'token': '' }
+    >>> res = login_handler(params)
+    >>> print res
+    >>> 
+    >>> # 错误token
+    >>> params = {  'netid': '1', 'pwd': '1', 'phone_num': '13824413780', 'token': '1' }
+    >>> res = login_handler(params)
+    >>> print res
+    >>>
+    >>> # 正确token + login_name
+    >>> params = {  'netid': '1', 'pwd': '1', 'phone_num': '13824413780', 'token': '2' }
+    >>> res = login_handler(params)
+    >>> print res
+    """
+    # 获取各个参数
     login_name = kwargs.get('netid', None)
     login_pwd = kwargs.get('pwd', None)
     phone_num = kwargs.get('phone_num', None)
     token = kwargs.get('token', None) 
-
-    if not login_name or not login_pwd:
-        res = { 'status': '400', 'info': '用户名或者密码不正确'}
-        return res 
-    elif not phone_num:
-        res = { 'status': '400', 'info': '请填写手机号'}
-        return res 
+    res = {}
+    # 验证输入完整性
+    if not check_input(login_name, login_pwd, phone_num, res):
+        return  res
     else:
         conn = connect_to_db()
         # 首次登陆验证,利用netid验证
         if not token:
-            token = _verify_netid(login_name, login_pwd)
-            if not token:
-                res = { 'status': '400', 'info': '用户名或者密码不正确'}
+            token = verify_netid(login_name, login_pwd, res)
+            if not token: 
                 return res 
             else:
-                sql = 'insert into user values(NULL, %s, %s, %s, 0, 0, %s,  %s)'
-                conn.execute(sql, login_name, login_pwd, phone_num, CampusArea.EAST ,token)  
-                res = {'200': '验证成功'}
-                return res
-                
+                # 保存token（根据netid pwd判断如果为新用户，则插入，否则则更新）
+                save_user(conn, login_name, login_pwd, phone_num, token)
         #　利用学号和token验证
         else:
-            msg = conn.get('select 1 from user where login_name=%s and token=%s', login_name, token)
-            # token 不匹配，重新拿netid去验证
-            if msg is None:
-                token = _verify_netid(login_name, login_pwd)
-                if not token:
-                    res = { 'status': '400', 'info': '用户名或者密码不正确'}
-                    return res 
-                else:
-                    sql = 'update user set token = %s where login_name=%s' 
-                    conn.execute(sql, token, login_name)
-                    res = {'200': '验证成功'}
-                    return res 
-            else:
-                res = {'200': '验证成功'}
-                return res
-
-def test_login():
-    params = {
-        'netid': 'houyf3',
-        'pwd': '7briB?ce',
-        'phone_num': '13824413780',
-        'token': '3',
-    }
-    res = login_handler(params)
-    print res
-
-
-
-
+            if not check_token(conn, token, login_name, res): 
+                return res 
+        # 验证成功后验证答题次数
+        if not check_times_out(conn, token, res):
+            return res
+        # 设置成功状态码
+        set_ok(res)
+        # 设置data部分
+        res['data'] = {
+            'token': token,
+            'question': fetch_one(conn, token)
+        }
+        # 用户答题答题次数加一
+        add_onetime(conn, token)
+        return res
 

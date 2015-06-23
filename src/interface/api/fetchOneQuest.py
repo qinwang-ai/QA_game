@@ -2,31 +2,6 @@
 # coding=utf-8
 
 from common.functions import *
-from config.base import QType
-
-def _fetch_one(type, conn, filters=[]):
-    # sql = 'select q_id, note from question limit 1 where `type`=%s and q_id not in %s'
-    # qu = conn.get(sql, type, tuple(filters)) 
-    sql = 'select q_id, note from question where `type`=%s limit 1'
-    qu = conn.get(sql, type) 
-    if qu is None:
-        print  '选不到合适的题....'
-        return {}
-    else:
-        # 随机选择一道没答过的题目, 还没添filters
-        sql = 'select o_id, note from options where q_id=%s'
-        opts = conn.query(sql, qu.q_id)
-        # 筛选题目对应的答案
-        for index, value in enumerate(opts):
-           opts[index] = dict(value)
-        # 如果是拼图题,需要打乱答案的顺序
-        if type == QType.PINTU:
-            pass 
-        info = {
-            'question': dict(qu),
-            'options': opts,
-        }
-        return info
 
 def getOldQuestionList(token):
     filters = []
@@ -56,7 +31,7 @@ def fetchOneQuestion(kwargs):
     else:
         res = {
             'status': '200',
-            'data': _fetch_one(type, conn, filters)
+            'data': _fetch_one(conn, type, filters)
         }
         return res
 
