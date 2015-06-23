@@ -41,6 +41,7 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_foucs'+'","path":'+'"images/btn_focus.png"},';
 	json_str += '{"name":"'+'btn_share'+'","path":'+'"images/btn_share.png"},';
 	json_str += '{"name":"'+'share'+'","path":'+'"images/share.png"},';
+	json_str += '{"name":"'+'puzzle_tips'+'","path":'+'"images/puzzle_tips.png"},';
 	json_str+='])';
 
 	var imgs_DATA = eval( json_str);
@@ -84,6 +85,7 @@ function load_complete( result){
 
 	//push to showlist PART4
 	showList_part4.push( new LBitmapData( result["puzzle_background"]));
+	showList_part4.push( new LBitmapData( result["puzzle_tips"]));
 	showList_part4.push( new LBitmapData( result["btn_OK"]));
 	showList_part4.push( new LBitmapData( result["btn_right2"]));
 	showList_part4.push( new LBitmapData( result["btn_error2"]));
@@ -414,15 +416,18 @@ function startPart3(){
 
 	//bitmap
 	gamepaper_Bitmap = new LBitmap( showList_part3[0]);
-	gamepaper_Bitmap.scaleX = global_width/showList_part3[0].width*0.88;		//w
-	gamepaper_Bitmap.scaleY = global_height/showList_part3[0].height*0.56;	//h
-	gamepaper_Bitmap.x = global_width*0.004;		//xi
-	gamepaper_Bitmap.y = global_height*0.18;	//yi
+	gamepaper_Bitmap.scaleX = global_width/showList_part3[0].width*0.91;//w
+	gamepaper_Bitmap.scaleY = global_height/showList_part3[0].height*0.57;//h
+	gamepaper_Bitmap.x = global_width*0.04;		//xi
+	gamepaper_Bitmap.y = global_height*0.14;	//yi
 	back_layer.addChild( gamepaper_Bitmap);
 
 	//text
 	game_text = new LTextField()
 	game_text.text = 'readtext';
+	game_text.x = global_width*0.15;
+	game_text.y = global_height*0.35;
+	game_text.color = "#DF9D00";
 
 	back_layer.addChild( game_text);
 	setTimeout( 'startPart3_write()', Read_TIME);
@@ -476,42 +481,53 @@ function startPart4(){
 	puzzle_Bitmap.y = global_height*0.15; //yi
 	back_layer.addChild( puzzle_Bitmap);
 
-	btnOK_Bitmap = new LBitmap( showList_part4[1]);
-	btnOK_Bitmap.scaleX = global_width/showList_part4[1].width*0.21;		//w
-	btnOK_Bitmap.scaleY = global_height/showList_part4[1].height*0.13;	//h
-	btnOK_Bitmap.x = global_width*0.29; //xi
+//need data !!!nan
+	puzzle_tips_Bitmap = new LBitmap( showList_part4[1]);
+	puzzle_tips_Bitmap.scaleX = global_width/showList_part4[1].width*0.20;		//w
+	puzzle_tips_Bitmap.scaleY = global_height/showList_part4[1].height*0.12;	//h
+	puzzle_tips_Bitmap.x = global_width*0.39; //xi
+	puzzle_tips_Bitmap.y = global_height*0.75; //yi
+	back_layer.addChild( puzzle_tips_Bitmap);
+
+	btnOK_Bitmap = new LBitmap( showList_part4[2]);
+	btnOK_Bitmap.scaleX = global_width/showList_part4[2].width*0.20;		//w
+	btnOK_Bitmap.scaleY = global_height/showList_part4[2].height*0.12;	//h
+	btnOK_Bitmap.x = global_width*0.39; //xi
 	btnOK_Bitmap.y = global_height*0.75; //yi
 	back_layer.addChild( btnOK_Bitmap);
+
 }
 function game_over(){
 	//remove
 	back_layer.removeChild( btnOK_Bitmap);
 	back_layer.removeChild( puzzle_Bitmap);
+	back_layer.removeChild( puzzle_tips_Bitmap);
 
 	//add
 
 	question_text.text = 'gameover';
 	btn_foucs_layer = new LSprite();
-	btn_foucs_layer.x = global_width*0.05; //xi
-	btn_foucs_layer.y = global_height*0.15; //yi
+	btn_foucs_layer.x = global_width*0.53; //xi
+	btn_foucs_layer.y = global_height*0.66; //yi
 
 	btn_share_layer = new LSprite();
-	btn_share_layer.x = global_width*0.05; //xi
-	btn_share_layer.y = global_height*0.15; //yi
+	btn_share_layer.x = global_width*0.07; //xi
+	btn_share_layer.y = global_height*0.66; //yi
 
 	btn_foucs_Bitmap = new LBitmap( showList_over[2]);
-	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.91;		//w
-	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.58;	//h
+	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.38;		//w
+	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.08;	//h
 	btn_foucs_layer.addChild( btn_foucs_Bitmap);
 
 	btn_share_Bitmap = new LBitmap( showList_over[3]);
-	btn_share_Bitmap.scaleX = global_width/showList_over[3].width*0.91;		//w
-	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.58;	//h
+	btn_share_Bitmap.scaleX = global_width/showList_over[3].width*0.39;		//w
+	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.08;	//h
 	btn_share_layer.addChild( btn_share_Bitmap);
-	//addEventListener
+
 	back_layer.addChild( btn_foucs_layer);
 	back_layer.addChild( btn_share_layer);
 
+//addEventListener
 //	btn_foucs_layer.addEventListener( LMouseEvent.MOUSE_DOWN, fou)
 	btn_share_layer.addEventListener( LMouseEvent.MOUSE_DOWN, game_share);
 }
