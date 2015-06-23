@@ -11,6 +11,13 @@ class QType(object):
     JUDGE = 3
     MEMORY = 4
 
+TypeScore = {
+    QType.SELECT: 3,
+    QType.PINTU: 4,
+    QType.JUDGE: 3,
+    QType.MEMORY: 2,
+}
+
 class CampusArea(object):
     EAST = 1
     SOUTH = 2

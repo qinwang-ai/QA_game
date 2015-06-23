@@ -9,6 +9,7 @@ from config.base import QType
 from config.base import StatusCode
 from config.base import ErrorMsg
 from config.base import CampusArea
+from config.base import TypeScore
 
 def log_decorator(func):
     """
@@ -20,39 +21,85 @@ def log_decorator(func):
     return func_with_log
 
 @log_decorator
+def connect_to_redis():
+    """
+    建立redis连接
+    """
+    global redis_conn
+    import redis
+    redis_conn = redis.Redis()
+    return redis_conn 
+
+@log_decorator
+def connect_to_db():
+    """
+    建立mysql连接
+    """
+    conn = torndb.Connection(db.HOSTNAME, db.DATABASE,
+        db.USERNAME, db.PASSWORD)
+    return conn 
+
+# redis 是线程安全的,所以可以用作全局变量
+redis_conn = connect_to_redis() 
+mysql_conn = connect_to_db()
+
+@log_decorator
+def add_question_to_redis(token, q_id):
+    """
+    添加一道题到用户已答题目的缓存中
+    """
+    global redis_conn
+    return redis_conn.sadd('%s:q_list'%token, q_id)
+
+@log_decorator
 def init_user_in_redis(token):
     """
     在内存缓存中初始化开始答题的用户数据结构
     """
-    pass
+    global redis_conn
+    conn = redis_conn
+    if conn.get(token):
+        clear_user_in_redis(token)
+    conn.set(token, True)    
+    conn.set('%s:start_time'%token, time.time())
+    conn.set('%s:score'%token, 0)
 
 @log_decorator
 def clear_user_in_redis(token):
     """
     清理用户的内存缓存
     """
-    pass
+    global redis_conn
+    conn = redis_conn
+    conn.delete(token)
+    conn.delete('%s:start_time'%token)
+    conn.delete('%s:score'%token)
+    conn.delete('%s:q_list'%token)
+    return 
 
 @log_decorator
 def _get_starttime(token):
     """"
     从内存缓存中根据用户token获取该用户的开始答题时间
     """
-    return time.time() - 61
+    global redis_conn
+    return float(redis_conn.get('%s:start_time'%token))
 
 @log_decorator
 def get_user_score_in_redis(token):
     """
     从内存缓存中根据token获取用户的总得分
     """ 
-    return 50
+    global redis_conn
+    return int(redis_conn.get('%s:score'%token))
 
 @log_decorator
 def update_user_score_in_redis(token, type):
     """
     更新用户临时分数
     """
-    pass 
+    global redis_conn
+    redis_conn.incrby('%s:score'%token, TypeScore[type])
 
 @log_decorator
 def update_user_score_in_mysql(conn, token, score):
@@ -75,17 +122,9 @@ def  _get_filters_list(token):
     """
     从内存缓存中获取已经答的题q_id列表
     """
-    return []
+    global redis_conn
+    return list(redis_conn.smembers('%s:q_list'%token))
 
-def connect_to_db():
-    """
-    >>> import torndb
-    >>> import config.base as base
-    >>> conn = connect_to_db()
-    """
-    conn = torndb.Connection(db.HOSTNAME, db.DATABASE,
-        db.USERNAME, db.PASSWORD)
-    return conn 
 
 def check_token(conn, token, login_name, res):
     """
@@ -103,8 +142,8 @@ def check_token(conn, token, login_name, res):
     >>> print  res.get('info', None)
     """
     # 如果login_name 设置为None, 则说明是在非登陆验证场景下的token验证（只需要token验证）
-    if login_name is None:
-        msg = conn.get('select 1 from user where token=%s', token) 
+    if not login_name:
+        msg = conn.get('select 1 from user where token=%s', token) if token else None
     # 登陆验证场景下需要netid + token一起验证
     else:
         msg = conn.get('select 1 from user where token = %s and login_name=%s', token, login_name)
@@ -116,12 +155,12 @@ def check_token(conn, token, login_name, res):
         return True
 
 @log_decorator
-def check_timeout(token, conn, res):
+def check_timeout(token, res):
     """
     验证用户答题时间限制, 60s
     """ 
-    if time.time() - _get_starttime(token) <= base.TIMEOUT :
-        res['status'] = StatusCode.TIMOOUT
+    if time.time() - _get_starttime(token) >= base.TIMEOUT :
+        res['status'] = StatusCode.TIMEOUT
         res['info']  = ErrorMsg[res['status']]
         return False
     return True
@@ -235,7 +274,7 @@ def save_user(conn, login_name, login_pwd, phone_num, token):
     如果是已有用户，则更新token
     """
     if  _user_exists(conn, login_name, login_pwd):
-        sql = 'update user set token = %s where login_name=%s, login_pwd=%s'
+        sql = 'update user set token = %s where login_name=%s and login_pwd=%s'
         conn.execute(sql, token, login_name, login_pwd)
     else:
         sql = 'insert into user values(NULL, %s, %s, %s, 0, 0, %s,  %s)'
@@ -263,17 +302,12 @@ def add_onetime(conn, token):
     conn.execute(sql,token)
 
 @log_decorator
-def is_right(conn, type, q_id, o_id, res):
+def is_right(conn, q_id, o_id):
     """
     根据类型和题目和选项判断答案是否正确
     """
-    msg = conn.get('select 1 from question where q_id=%s and type=%s', q_id, type)
+    msg = conn.get('select 1 from question where q_id=%s', q_id)
     if not msg: return False
     sql = 'select 1 from options where q_id=%s and o_id=%s and is_ans=%s'
     msg = conn.get(sql, q_id, o_id, True)
-    if not msg:
-        res['status'] = StatusCode.WRONG_ANSER
-        res['info']  = ErrorMsg[res['status']] 
-        return False
-    else:
-        return True
+    return True if msg else False 

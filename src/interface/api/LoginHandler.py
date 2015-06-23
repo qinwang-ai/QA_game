@@ -36,7 +36,7 @@ def login_handler(kwargs):
     if not check_input(login_name, login_pwd, phone_num, res):
         return  res
     else:
-        conn = connect_to_db()
+        conn = mysql_conn
         # 首次登陆验证,利用netid验证
         if not token:
             token = verify_netid(login_name, login_pwd, res)
@@ -52,14 +52,18 @@ def login_handler(kwargs):
         # 验证成功后验证答题次数
         if not check_times_out(conn, token, res):
             return res
-        # 设置成功状态码
-        set_ok(res)
-        # 设置data部分
-        res['data'] = {
-            'token': token,
-            'question': fetch_one(conn, token)
-        }
         # 用户答题答题次数加一
         add_onetime(conn, token)
+        # 初始化验证成功的用户
+        init_user_in_redis(token)
+        # 随机获取一道题
+        q = fetch_one(conn, token)
+        # 设置data部分
+        res['token'] = token
+        res['data'] = q
+        # 题id加到内存缓存列表中
+        add_question_to_redis(token, q['question']['q_id'])
+        # 设置成功状态码
+        set_ok(res)
         return res
 
