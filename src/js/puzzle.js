@@ -52,7 +52,7 @@ function puzzle_game(){
 clickA = 0;
 clickB = 0;
 function clickPicture(i){
-    console.log( i.currentTarget.name, 'click');
+    //console.log( i.currentTarget.name, 'click');
     if( clickA == 0){
         clickA = i.currentTarget.name;
     }else{
@@ -72,6 +72,7 @@ function swap(){
     layerA.y = layerB.y;
     layerB.x = x;
     layerB.y = y;
+
 
     clickA = 0;
     clickB = 0;
