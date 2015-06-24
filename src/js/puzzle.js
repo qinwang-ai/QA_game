@@ -52,6 +52,7 @@ function puzzle_game(){
 clickA = 0;
 clickB = 0;
 function clickPicture(i){
+    console.log( i.currentTarget.name, 'click');
     if( clickA == 0){
         clickA = i.currentTarget.name;
     }else{
@@ -64,16 +65,14 @@ function clickPicture(i){
 function swap(){
     layerA = back_layer.getChildByName( clickA);
     layerB = back_layer.getChildByName( clickB);
-    indexA = back_layer.getChildIndex( layerA);
-    indexB = back_layer.getChildIndex( layerB);
-    var tmp = back_layer.childList[ indexA].childList[0];
-    back_layer.childList[ indexA].childList[0] = back_layer.childList[ indexB].childList[0];
-    back_layer.childList[ indexB].childList[0] = tmp;
 
+    x = layerA.x;
+    y = layerA.y;
+    layerA.x = layerB.x;
+    layerA.y = layerB.y;
+    layerB.x = x;
+    layerB.y = y;
 
-    //var tmp = layerA.childList[0];
-    //layerA.childList[0] = layerB.childList[0];
-    //layerB.childList[0] = tmp;
     clickA = 0;
     clickB = 0;
 }
