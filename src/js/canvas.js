@@ -37,7 +37,7 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_error2'+'","path":'+'"images/btn_error2.png"},';
 	json_str += '{"name":"'+'background_flash'+'","path":'+'"images/background_flash.png"},';
 	json_str += '{"name":"'+'background_foot'+'","path":'+'"images/background_foot.png"},';
-	json_str += '{"name":"'+'result'+'","path":'+'"images/background_result.png"},';
+	json_str += '{"name":"'+'background_result'+'","path":'+'"images/background_result.png"},';
 	json_str += '{"name":"'+'btn_foucs'+'","path":'+'"images/btn_focus.png"},';
 	json_str += '{"name":"'+'btn_share'+'","path":'+'"images/btn_share.png"},';
 	json_str += '{"name":"'+'share'+'","path":'+'"images/share.png"},';
@@ -56,6 +56,9 @@ function load_images( load_char_C){
 	);
 }
 
+
+
+//WARNING:DONT CHANGE THE PUSH ORDER!!!!!!!!!!
 function load_complete( result){
 	//push to showlist  start
 	showList_back.push( new LBitmapData( result["back"]));
@@ -105,6 +108,7 @@ function load_complete( result){
 	showList_over.push( new LBitmapData( result["btn_foucs"]));
 	showList_over.push( new LBitmapData( result["btn_share"]));
 	showList_over.push( new LBitmapData( result["share"]));
+	showList_over.push( new LBitmapData( result["background_result"]));
 
 
 	build_background();
@@ -375,15 +379,10 @@ function part1o4check(event){
 
 //#############################################PART2
 function startPart2(){
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( option3);
-	back_layer.removeChild( option4);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( field3);
-	back_layer.removeChild( field4);
-	back_layer.removeChild( choose_title_Bitmap);
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( game_blackboard_Bitmap);
+	back_layer.addChild( question_text);
 
 
 	option1 = new LSprite();
@@ -430,14 +429,8 @@ function part2o2check(){
 
 //######################################################PART3
 function startPart3(){
-	back_layer.removeChild( game_blackboard_Bitmap);
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( question_text);
-	back_layer.removeChild( judgment_title_Bitmap);
-
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
 
 	//bitmap
 	gamepaper_Bitmap = new LBitmap( showList_part3[0]);
@@ -495,16 +488,8 @@ function part3o4check(event){
 
 //##############################################PART4
 function startPart4(){
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( option3);
-	back_layer.removeChild( option4);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( field3);
-	back_layer.removeChild( field4);
-	back_layer.removeChild( game_blackboard_Bitmap);
-	back_layer.removeChild( memory_title_Bitmap);
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
 
 //puzzle
 	puzzle_Bitmap = new LBitmap( showList_part4[0]);
@@ -543,14 +528,18 @@ function startPart4(){
 
 }
 function game_over(){
-	//remove
-	back_layer.removeChild( btnOK_Bitmap);
-	back_layer.removeChild( puzzle_Bitmap);
-	back_layer.removeChild( puzzle_tips_Bitmap);
-	back_layer.removeChild( puzzle_title_Bitmap);
+	//removeall  because part4 too many objects
+	// no manner to clear all which is belong to part4
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( question_text);
 
 	//add
+	result_Bitmap = new LBitmap( showList_over[5]);
+	back_layer.addChild( result_Bitmap);
 
+
+//layer
 	question_text.text = 'gameover';
 	btn_foucs_layer = new LSprite();
 	btn_foucs_layer.x = global_width*0.53; //xi
@@ -560,6 +549,7 @@ function game_over(){
 	btn_share_layer.x = global_width*0.07; //xi
 	btn_share_layer.y = global_height*0.66; //yi
 
+//bitmap
 	btn_foucs_Bitmap = new LBitmap( showList_over[2]);
 	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.38;		//w
 	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.08;	//h
@@ -570,6 +560,7 @@ function game_over(){
 	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.08;	//h
 	btn_share_layer.addChild( btn_share_Bitmap);
 
+//addChild
 	back_layer.addChild( btn_foucs_layer);
 	back_layer.addChild( btn_share_layer);
 
@@ -719,7 +710,7 @@ showList_part4 = new Array();
 showList_over = new Array();
 showList_puzzle = new Array();
 puzzle_str_seq = '123456';
-puzzle_type = '1';
+puzzle_type = '4';
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
 Ajax_URL = 'l';
 Read_TIME = 1000;//milliseconds

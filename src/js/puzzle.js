@@ -25,10 +25,10 @@ function PushPart4_game( result){
 }
 
 function puzzle_game(){
-    xi = 0.08;
-    yi = 0.22;
-    w = 0.26;
-    h = 0.16;
+    xi = 0.070;
+    yi = 0.226;
+    w = 0.284;
+    h = 0.160;
     for(var i = 1;i<=9;i++){
         var img_layer = new LSprite();
     	var img_Bitmap = new LBitmap( showList_puzzle[i-1]);
@@ -39,10 +39,10 @@ function puzzle_game(){
     	img_layer.addChild( img_Bitmap);
 //        puzzle_img_layers.push( img_layer);
         back_layer.addChild( img_layer);
-        xi += 0.29;
-        if(xi > 0.66){
-            xi = 0.08;
-            yi += 0.16;
+        xi += w;
+        if(xi > 0.638){
+            xi = 0.070;
+            yi += h;
         }
         img_layer.addEventListener( LMouseEvent.MOUSE_DOWN, clickPicture);
         img_layer.name = i.toString();
@@ -83,6 +83,7 @@ function cmp(a,b){
 }
 function submitanswer(){
     var sortArray = new Array();
+    // back_layer last 9 chlid is these layers
     for(var i = back_layer.childList.length-9;i<=back_layer.childList.length-1;i++){
        sortArray.push( back_layer.childList[i]);
     }
