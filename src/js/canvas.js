@@ -534,10 +534,13 @@ function game_over(){
 	back_layer.addChild( back_Bitmap);
 	back_layer.addChild( question_text);
 
-	//add
+	//CONTINUE!!!
 	result_Bitmap = new LBitmap( showList_over[5]);
 	back_layer.addChild( result_Bitmap);
-
+	result_Bitmap.x = global_width*0.07;		//xi
+	result_Bitmap.y = global_height*0.154;	//yi
+	result_Bitmap.scaleX = global_width/showList_over[5].width*0.856;
+	result_Bitmap.scaleY = global_height/showList_over[5].height*0.457;
 
 //layer
 	question_text.text = 'gameover';
