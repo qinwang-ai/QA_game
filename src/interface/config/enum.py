@@ -20,6 +20,14 @@ class CampusArea(object):
     WEST = 3
     ZHUHAI = 4
 
+Campus = {
+    '珠海': CampusArea.ZHUHAI,
+    '南校区': CampusArea.SOUTH,
+    '东校': CampusArea.EAST,
+    '北校': CampusArea.WEST,
+}
+
+
 class StatusCode(object):
     INVALID_TOKEN = 1
     INVALID_USERNAME = 2
