@@ -46,6 +46,7 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'judgment_title'+'","path":'+'"images/judgment_title.png"},';
 	json_str += '{"name":"'+'puzzle_title'+'","path":'+'"images/puzzle_title.png"},';
 	json_str += '{"name":"'+'memory_title'+'","path":'+'"images/memory_title.png"},';
+	json_str += '{"name":"'+'result_foot'+'","path":'+'"images/result_foot.png"},';
 	json_str+='])';
 
 	var imgs_DATA = eval( json_str);
@@ -109,6 +110,7 @@ function load_complete( result){
 	showList_over.push( new LBitmapData( result["btn_share"]));
 	showList_over.push( new LBitmapData( result["share"]));
 	showList_over.push( new LBitmapData( result["background_result"]));
+	showList_over.push( new LBitmapData( result["result_foot"]));
 
 
 	build_background();
@@ -236,13 +238,17 @@ function gamelogin(){
 	back_layer.addChild( phone);
 }
 function check_auth(){
-	console.log('login');
-	/*
-	$.post( Ajax_URL,{NetId:net_id.text,Psw:psw.text,Phone:phone.text},function(result){
+	if( net_id.text != '' && phone.text != '' && psw.text != ''){
+		console.log('netid',net_id.text);
+		console.log('phone',phone.text);
+		console.log('psw',psw.text);
+		/*
+		$.post( Ajax_URL,{NetId:net_id.text,Psw:psw.text,Phone:phone.text},function(result){
 
- 	});
-	*/
-	start_game = 1;
+ 		});
+		*/
+		start_game = 1;
+	}
 }
 //#############################################PART1
 function startPart1(){
@@ -563,6 +569,13 @@ function game_over(){
 	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.08;	//h
 	btn_share_layer.addChild( btn_share_Bitmap);
 
+	result_foot_Bitmap = new LBitmap( showList_over[6]);
+	result_foot_Bitmap.x = global_width*0.04; //xi
+	result_foot_Bitmap.y = global_height*0.84; //yi
+	result_foot_Bitmap.scaleX = global_width/showList_over[6].width*0.05;		//w
+	result_foot_Bitmap.scaleY = global_height/showList_over[6].height*0.03;	//h
+	back_layer.addChild( result_foot_Bitmap);
+
 //addChild
 	back_layer.addChild( btn_foucs_layer);
 	back_layer.addChild( btn_share_layer);
@@ -584,89 +597,7 @@ function game_share(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//==============================
+//==============================>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 //controller_frame
 
