@@ -26,7 +26,7 @@ class MainHandler(tornado.web.RequestHandler):
         self.write(dumps(res))
 
 if __name__ == "__main__":
-    application = tornado.web.Application([(r"/", MainHandler),], debug=True)
+    application = tornado.web.Application([(r"/graduation", MainHandler),], debug=True)
     options.parse_command_line()
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()

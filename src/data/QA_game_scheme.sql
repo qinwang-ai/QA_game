@@ -23,7 +23,7 @@ create table if not exists `question`(
     q_id int not null auto_increment,
     note text not null comment '问题描述',
     `type`  tinyint(2) not null comment '问题类型, 1 选择题, 2 表示判断题, 3表示拼图题, 4表示记忆题',
-    `score` tinyint(2) not null comment '单一问题的分数',
+    `score` tinyint(2) null comment '单一问题的分数, 默认不需要, 因为分数是按题型区分',
     primary key (`q_id`)
 )engine = innodb default charset=utf8;
 
@@ -32,7 +32,7 @@ create table if not exists `options`(
     o_id int not null auto_increment,
     note varchar(100) not null comment '选项描述, 如果拼图题，则是图片碎片的url',
     q_id int not null comment '所属的题目',
-    is_ans tinyint null comment '如果是非拼图题,0 表示错误答案, 1表示正确答案', 
+    is_ans tinyint(2) null comment '如果是非拼图题,0 表示错误答案, 1表示正确答案', 
     primary key (`o_id`),
     constraint `fk_quora` foreign key(`q_id`) references question(`q_id`) on update cascade on delete cascade,
     index(`q_id`)
