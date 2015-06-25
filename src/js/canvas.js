@@ -508,10 +508,10 @@ function startPart4(){
 
 //puzzle
 	puzzle_Bitmap = new LBitmap( showList_part4[0]);
-	puzzle_Bitmap.scaleX = global_width/showList_part4[0].width*0.91;		//w
-	puzzle_Bitmap.scaleY = global_height/showList_part4[0].height*0.58;	//h
-	puzzle_Bitmap.x = global_width*0.05; //xi
-	puzzle_Bitmap.y = global_height*0.15; //yi
+	puzzle_Bitmap.scaleX = global_width/showList_part4[0].width*0.906;		//w
+	puzzle_Bitmap.scaleY = global_height/showList_part4[0].height*0.571;	//h
+	puzzle_Bitmap.x = global_width*0.045; //xi
+	puzzle_Bitmap.y = global_height*0.156; //yi
 	back_layer.addChild( puzzle_Bitmap);
 
 //title
@@ -531,12 +531,15 @@ function startPart4(){
 	back_layer.addChild( puzzle_tips_Bitmap);
 
 //btn
+	btnOK_layer = new LSprite();
+	btnOK_layer.x = global_width*0.39; //xi
+	btnOK_layer.y = global_height*0.8; //yi
+	back_layer.addChild( btnOK_layer);
 	btnOK_Bitmap = new LBitmap( showList_part4[2]);
 	btnOK_Bitmap.scaleX = global_width/showList_part4[2].width*0.20;		//w
 	btnOK_Bitmap.scaleY = global_height/showList_part4[2].height*0.12;	//h
-	btnOK_Bitmap.x = global_width*0.39; //xi
-	btnOK_Bitmap.y = global_height*0.8; //yi
-	back_layer.addChild( btnOK_Bitmap);
+	btnOK_layer.addChild( btnOK_Bitmap);
+	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, submitanswer);
 
 }
 function game_over(){
@@ -670,12 +673,6 @@ function game_share(){
 
 
 //==============================
-function sms (str) {
-  var min = str.split(':')[0];
-  var sed = str.split(':')[1];
-  var ans =(min * 60 + sed) * 1000;
-  return ans;
-}
 
 //controller_frame
 

@@ -54,26 +54,42 @@ clickB = 0;
 function clickPicture(i){
     //console.log( i.currentTarget.name, 'click');
     if( clickA == 0){
-        clickA = i.currentTarget.name;
+        clickA = i.currentTarget;
     }else{
         if( clickB == 0){
-            clickB = i.currentTarget.name;
+            clickB = i.currentTarget;
             swap();
         }
     }
 }
 function swap(){
-    layerA = back_layer.getChildByName( clickA);
-    layerB = back_layer.getChildByName( clickB);
-
-    x = layerA.x;
-    y = layerA.y;
-    layerA.x = layerB.x;
-    layerA.y = layerB.y;
-    layerB.x = x;
-    layerB.y = y;
+    x = clickA.x;
+    y = clickA.y;
+    clickA.x = clickB.x;
+    clickA.y = clickB.y;
+    clickB.x = x;
+    clickB.y = y;
 
 
     clickA = 0;
     clickB = 0;
+}
+
+function cmp(a,b){
+    if( a.y==b.y){
+        return a.x-b.x;
+    }
+    return a.y-b.y;
+}
+function submitanswer(){
+    var sortArray = new Array();
+    for(var i = back_layer.childList.length-9;i<=back_layer.childList.length-1;i++){
+       sortArray.push( back_layer.childList[i]);
+    }
+    sortArray.sort( cmp);
+    answer = '';
+    for( x in sortArray){
+        answer += sortArray[x].name;
+    }
+    console.log( answer);
 }
