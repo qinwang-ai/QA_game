@@ -37,10 +37,15 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_error2'+'","path":'+'"images/btn_error2.png"},';
 	json_str += '{"name":"'+'background_flash'+'","path":'+'"images/background_flash.png"},';
 	json_str += '{"name":"'+'background_foot'+'","path":'+'"images/background_foot.png"},';
-	json_str += '{"name":"'+'result'+'","path":'+'"images/background_result.png"},';
+	json_str += '{"name":"'+'background_result'+'","path":'+'"images/background_result.png"},';
 	json_str += '{"name":"'+'btn_foucs'+'","path":'+'"images/btn_focus.png"},';
 	json_str += '{"name":"'+'btn_share'+'","path":'+'"images/btn_share.png"},';
 	json_str += '{"name":"'+'share'+'","path":'+'"images/share.png"},';
+	json_str += '{"name":"'+'puzzle_tips'+'","path":'+'"images/puzzle_tips.png"},';
+	json_str += '{"name":"'+'choose_title'+'","path":'+'"images/choose_title.png"},';
+	json_str += '{"name":"'+'judgment_title'+'","path":'+'"images/judgment_title.png"},';
+	json_str += '{"name":"'+'puzzle_title'+'","path":'+'"images/puzzle_title.png"},';
+	json_str += '{"name":"'+'memory_title'+'","path":'+'"images/memory_title.png"},';
 	json_str+='])';
 
 	var imgs_DATA = eval( json_str);
@@ -51,6 +56,9 @@ function load_images( load_char_C){
 	);
 }
 
+
+
+//WARNING:DONT CHANGE THE PUSH ORDER!!!!!!!!!!
 function load_complete( result){
 	//push to showlist  start
 	showList_back.push( new LBitmapData( result["back"]));
@@ -72,21 +80,26 @@ function load_complete( result){
 	showList_part1.push( new LBitmapData( result["btn_nor"]));
 	showList_part1.push( new LBitmapData( result["btn_right"]));
 	showList_part1.push( new LBitmapData( result["btn_error"]));
+	showList_part1.push( new LBitmapData( result["choose_title"]));
 
 	//push to showlist  part2
 	showList_part2.push( new LBitmapData( result["btn_nor_right"]));
 	showList_part2.push( new LBitmapData( result["btn_nor_error"]));
 	showList_part2.push( new LBitmapData( result["btn_sel_right"]));
 	showList_part2.push( new LBitmapData( result["btn_sel_error"]));
+	showList_part2.push( new LBitmapData( result["judgment_title"]));
 
 	//push to showlist  part3
 	showList_part3.push( new LBitmapData( result["game_paper"]));
+	showList_part3.push( new LBitmapData( result["memory_title"]));
 
 	//push to showlist PART4
 	showList_part4.push( new LBitmapData( result["puzzle_background"]));
+	showList_part4.push( new LBitmapData( result["puzzle_tips"]));
 	showList_part4.push( new LBitmapData( result["btn_OK"]));
 	showList_part4.push( new LBitmapData( result["btn_right2"]));
 	showList_part4.push( new LBitmapData( result["btn_error2"]));
+	showList_part4.push( new LBitmapData( result["puzzle_title"]));
 
 	//push to showlist game_over
 
@@ -95,6 +108,7 @@ function load_complete( result){
 	showList_over.push( new LBitmapData( result["btn_foucs"]));
 	showList_over.push( new LBitmapData( result["btn_share"]));
 	showList_over.push( new LBitmapData( result["share"]));
+	showList_over.push( new LBitmapData( result["background_result"]));
 
 
 	build_background();
@@ -242,6 +256,13 @@ function startPart1(){
 	back_layer.removeChild( login_input_Bitmap3);
 	build_part1();
 //add option mouse event listener
+	choose_title_Bitmap = new LBitmap( showList_part1[4]);
+	choose_title_Bitmap.x = global_width*0.05;		//xi
+	choose_title_Bitmap.y = global_height*0.07;	//yi
+	choose_title_Bitmap.scaleX = global_width/showList_part1[4].width*0.5;		//w
+	choose_title_Bitmap.scaleY = global_height/showList_part1[4].height*0.02;	//h
+
+	back_layer.addChild( choose_title_Bitmap);
 	option1.addEventListener( LMouseEvent.MOUSE_DOWN, part1o1check);
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part1o2check);
 	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part1o3check);
@@ -276,6 +297,7 @@ function build_part1(){
 	option4.y = global_height*0.57;	//yi
 
 //four bitmap
+
 //A
 	btn_nor_Bitmap = new LBitmap( showList_part1[1]);
 	btn_nor_Bitmap.scaleX = global_width/showList_part1[1].width*0.44;		//w
@@ -357,14 +379,10 @@ function part1o4check(event){
 
 //#############################################PART2
 function startPart2(){
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( option3);
-	back_layer.removeChild( option4);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( field3);
-	back_layer.removeChild( field4);
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( game_blackboard_Bitmap);
+	back_layer.addChild( question_text);
 
 
 	option1 = new LSprite();
@@ -377,6 +395,13 @@ function startPart2(){
 	option1.y = global_height*0.45;	//yi
 	option2.x = global_width*0.29;		//xi
 	option2.y = global_height*0.57;	//yi
+
+	judgment_title_Bitmap = new LBitmap( showList_part2[4]);
+	judgment_title_Bitmap.x = global_width*0.05;		//xi
+	judgment_title_Bitmap.y = global_height*0.07;	//yi
+	judgment_title_Bitmap.scaleX = global_width/showList_part2[4].width*0.5;		//w
+	judgment_title_Bitmap.scaleY = global_height/showList_part2[4].height*0.02;	//h
+	back_layer.addChild( judgment_title_Bitmap);
 
 //bitmap
 //A
@@ -404,25 +429,30 @@ function part2o2check(){
 
 //######################################################PART3
 function startPart3(){
-	back_layer.removeChild( game_blackboard_Bitmap);
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( question_text);
-
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
 
 	//bitmap
 	gamepaper_Bitmap = new LBitmap( showList_part3[0]);
-	gamepaper_Bitmap.scaleX = global_width/showList_part3[0].width*0.88;		//w
-	gamepaper_Bitmap.scaleY = global_height/showList_part3[0].height*0.56;	//h
-	gamepaper_Bitmap.x = global_width*0.004;		//xi
-	gamepaper_Bitmap.y = global_height*0.18;	//yi
+	gamepaper_Bitmap.scaleX = global_width/showList_part3[0].width*0.91;//w
+	gamepaper_Bitmap.scaleY = global_height/showList_part3[0].height*0.57;//h
+	gamepaper_Bitmap.x = global_width*0.04;		//xi
+	gamepaper_Bitmap.y = global_height*0.14;	//yi
 	back_layer.addChild( gamepaper_Bitmap);
+
+	memory_title_Bitmap = new LBitmap( showList_part3[1]);
+	memory_title_Bitmap.x = global_width*0.05;		//xi
+	memory_title_Bitmap.y = global_height*0.07;	//yi
+	memory_title_Bitmap.scaleX = global_width/showList_part3[1].width*0.5;		//w
+	memory_title_Bitmap.scaleY = global_height/showList_part3[1].height*0.02;	//h
+	back_layer.addChild( memory_title_Bitmap);
 
 	//text
 	game_text = new LTextField()
 	game_text.text = 'readtext';
+	game_text.x = global_width*0.15;
+	game_text.y = global_height*0.35;
+	game_text.color = "#DF9D00";
 
 	back_layer.addChild( game_text);
 	setTimeout( 'startPart3_write()', Read_TIME);
@@ -458,60 +488,86 @@ function part3o4check(event){
 
 //##############################################PART4
 function startPart4(){
-	back_layer.removeChild( option1);
-	back_layer.removeChild( option2);
-	back_layer.removeChild( option3);
-	back_layer.removeChild( option4);
-	back_layer.removeChild( field1);
-	back_layer.removeChild( field2);
-	back_layer.removeChild( field3);
-	back_layer.removeChild( field4);
-	back_layer.removeChild( game_blackboard_Bitmap);
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
 
-
+//puzzle
 	puzzle_Bitmap = new LBitmap( showList_part4[0]);
-	puzzle_Bitmap.scaleX = global_width/showList_part4[0].width*0.91;		//w
-	puzzle_Bitmap.scaleY = global_height/showList_part4[0].height*0.58;	//h
-	puzzle_Bitmap.x = global_width*0.05; //xi
-	puzzle_Bitmap.y = global_height*0.15; //yi
+	puzzle_Bitmap.scaleX = global_width/showList_part4[0].width*0.906;		//w
+	puzzle_Bitmap.scaleY = global_height/showList_part4[0].height*0.571;	//h
+	puzzle_Bitmap.x = global_width*0.045; //xi
+	puzzle_Bitmap.y = global_height*0.156; //yi
 	back_layer.addChild( puzzle_Bitmap);
 
-	btnOK_Bitmap = new LBitmap( showList_part4[1]);
-	btnOK_Bitmap.scaleX = global_width/showList_part4[1].width*0.21;		//w
-	btnOK_Bitmap.scaleY = global_height/showList_part4[1].height*0.13;	//h
-	btnOK_Bitmap.x = global_width*0.29; //xi
-	btnOK_Bitmap.y = global_height*0.75; //yi
-	back_layer.addChild( btnOK_Bitmap);
+//title
+	puzzle_title_Bitmap = new LBitmap( showList_part4[5]);
+	puzzle_title_Bitmap.x = global_width*0.05;		//xi
+	puzzle_title_Bitmap.y = global_height*0.07;	//yi
+	puzzle_title_Bitmap.scaleX = global_width/showList_part4[5].width*0.5;		//w
+	puzzle_title_Bitmap.scaleY = global_height/showList_part4[5].height*0.02;	//h
+	back_layer.addChild( puzzle_title_Bitmap);
+
+//tips
+	puzzle_tips_Bitmap = new LBitmap( showList_part4[1]);
+	puzzle_tips_Bitmap.scaleX = global_width/showList_part4[1].width*0.84;		//w
+	puzzle_tips_Bitmap.scaleY = global_height/showList_part4[1].height*0.02;	//h
+	puzzle_tips_Bitmap.x = global_width*0.06; //xi
+	puzzle_tips_Bitmap.y = global_height*0.74; //yi
+	back_layer.addChild( puzzle_tips_Bitmap);
+
+//btn
+	btnOK_layer = new LSprite();
+	btnOK_layer.x = global_width*0.39; //xi
+	btnOK_layer.y = global_height*0.8; //yi
+	back_layer.addChild( btnOK_layer);
+	btnOK_Bitmap = new LBitmap( showList_part4[2]);
+	btnOK_Bitmap.scaleX = global_width/showList_part4[2].width*0.20;		//w
+	btnOK_Bitmap.scaleY = global_height/showList_part4[2].height*0.12;	//h
+	btnOK_layer.addChild( btnOK_Bitmap);
+	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, submitanswer);
+
 }
 function game_over(){
-	//remove
-	back_layer.removeChild( btnOK_Bitmap);
-	back_layer.removeChild( puzzle_Bitmap);
+	//removeall  because part4 too many objects
+	// no manner to clear all which is belong to part4
+	back_layer.removeAllChild();
+	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( question_text);
 
-	//add
+	//CONTINUE!!!
+	result_Bitmap = new LBitmap( showList_over[5]);
+	back_layer.addChild( result_Bitmap);
+	result_Bitmap.x = global_width*0.07;		//xi
+	result_Bitmap.y = global_height*0.154;	//yi
+	result_Bitmap.scaleX = global_width/showList_over[5].width*0.856;
+	result_Bitmap.scaleY = global_height/showList_over[5].height*0.457;
 
+//layer
 	question_text.text = 'gameover';
 	btn_foucs_layer = new LSprite();
-	btn_foucs_layer.x = global_width*0.05; //xi
-	btn_foucs_layer.y = global_height*0.15; //yi
+	btn_foucs_layer.x = global_width*0.53; //xi
+	btn_foucs_layer.y = global_height*0.66; //yi
 
 	btn_share_layer = new LSprite();
-	btn_share_layer.x = global_width*0.05; //xi
-	btn_share_layer.y = global_height*0.15; //yi
+	btn_share_layer.x = global_width*0.07; //xi
+	btn_share_layer.y = global_height*0.66; //yi
 
+//bitmap
 	btn_foucs_Bitmap = new LBitmap( showList_over[2]);
-	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.91;		//w
-	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.58;	//h
+	btn_foucs_Bitmap.scaleX = global_width/showList_over[2].width*0.38;		//w
+	btn_foucs_Bitmap.scaleY = global_height/showList_over[2].height*0.08;	//h
 	btn_foucs_layer.addChild( btn_foucs_Bitmap);
 
 	btn_share_Bitmap = new LBitmap( showList_over[3]);
-	btn_share_Bitmap.scaleX = global_width/showList_over[3].width*0.91;		//w
-	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.58;	//h
+	btn_share_Bitmap.scaleX = global_width/showList_over[3].width*0.39;		//w
+	btn_share_Bitmap.scaleY = global_height/showList_over[3].height*0.08;	//h
 	btn_share_layer.addChild( btn_share_Bitmap);
-	//addEventListener
+
+//addChild
 	back_layer.addChild( btn_foucs_layer);
 	back_layer.addChild( btn_share_layer);
 
+//addEventListener
 //	btn_foucs_layer.addEventListener( LMouseEvent.MOUSE_DOWN, fou)
 	btn_share_layer.addEventListener( LMouseEvent.MOUSE_DOWN, game_share);
 }
@@ -611,35 +667,30 @@ function game_share(){
 
 
 //==============================
-function sms (str) {
-  var min = str.split(':')[0];
-  var sed = str.split(':')[1];
-  var ans =(min * 60 + sed) * 1000;
-  return ans;
-}
 
 //controller_frame
 
 function controller_frame(){
 	if( start_game == 1){
-		startPart1();
 		start_game = 0;
+		startPart1();
 	}
 	if( start_game == 2){
-		startPart2();
 		start_game = 0;
+		startPart2();
 	}
 	if( start_game == 3){
-		startPart3();
 		start_game = 0;
+		startPart3();
 	}
 	if( start_game == 4){
-		startPart4();
 		start_game = 0;
+		startPart4();
+    	setTimeout( "load_puzzle_images()", 500);
 	}
 	if( start_game == 5){
-		game_over();
 		start_game = 0;
+		game_over();
 	}
 }
 //###########%%%%%%%================================MAIN START=================#####################%%%%%%%%%
@@ -649,8 +700,8 @@ function main(){
 	$(" #mylegend").css( "margin", "0 auto");
 	back_layer = new LSprite();
 	addChild( back_layer);
-//	back_layer.visible = false;
-	back_layer.addEventListener( LEvent.ENTER_FRAME, controller_frame);
+//	back_layer.addEventListener( LEvent.ENTER_FRAME, controller_frame);
+	setInterval( "controller_frame()", 500);
 	load_images( load_complete);  //load 1back->2A->3B
 }
 //=======================================DATA============
@@ -660,6 +711,9 @@ showList_part2 = new Array();
 showList_part3 = new Array();
 showList_part4 = new Array();
 showList_over = new Array();
+showList_puzzle = new Array();
+puzzle_str_seq = '123456';
+puzzle_type = '4';
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
 Ajax_URL = 'l';
 Read_TIME = 1000;//milliseconds
