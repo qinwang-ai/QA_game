@@ -2,14 +2,16 @@
 # coding=utf-8
 
 import torndb
-import config.database as db
-import config.base as base
 import time
-from config.base import QType
-from config.base import StatusCode
-from config.base import ErrorMsg
-from config.base import CampusArea
-from config.base import TypeScore
+from config.database import *
+from config.base import *
+from config.enum import *
+from config.ans import *
+from common.memory import *
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def log_decorator(func):
     """
@@ -21,85 +23,15 @@ def log_decorator(func):
     return func_with_log
 
 @log_decorator
-def connect_to_redis():
-    """
-    建立redis连接
-    """
-    global redis_conn
-    import redis
-    redis_conn = redis.Redis()
-    return redis_conn 
-
-@log_decorator
 def connect_to_db():
     """
     建立mysql连接
     """
-    conn = torndb.Connection(db.HOSTNAME, db.DATABASE,
-        db.USERNAME, db.PASSWORD)
+    conn = torndb.Connection(HOSTNAME, DATABASE,
+        USERNAME, PASSWORD)
     return conn 
 
-# redis 是线程安全的,所以可以用作全局变量
-redis_conn = connect_to_redis() 
 mysql_conn = connect_to_db()
-
-@log_decorator
-def add_question_to_redis(token, q_id):
-    """
-    添加一道题到用户已答题目的缓存中
-    """
-    global redis_conn
-    return redis_conn.sadd('%s:q_list'%token, q_id)
-
-@log_decorator
-def init_user_in_redis(token):
-    """
-    在内存缓存中初始化开始答题的用户数据结构
-    """
-    global redis_conn
-    conn = redis_conn
-    if conn.get(token):
-        clear_user_in_redis(token)
-    conn.set(token, True)    
-    conn.set('%s:start_time'%token, time.time())
-    conn.set('%s:score'%token, 0)
-
-@log_decorator
-def clear_user_in_redis(token):
-    """
-    清理用户的内存缓存
-    """
-    global redis_conn
-    conn = redis_conn
-    conn.delete(token)
-    conn.delete('%s:start_time'%token)
-    conn.delete('%s:score'%token)
-    conn.delete('%s:q_list'%token)
-    return 
-
-@log_decorator
-def _get_starttime(token):
-    """"
-    从内存缓存中根据用户token获取该用户的开始答题时间
-    """
-    global redis_conn
-    return float(redis_conn.get('%s:start_time'%token))
-
-@log_decorator
-def get_user_score_in_redis(token):
-    """
-    从内存缓存中根据token获取用户的总得分
-    """ 
-    global redis_conn
-    return int(redis_conn.get('%s:score'%token))
-
-@log_decorator
-def update_user_score_in_redis(token, type):
-    """
-    更新用户临时分数
-    """
-    global redis_conn
-    redis_conn.incrby('%s:score'%token, TypeScore[type])
 
 @log_decorator
 def update_user_score_in_mysql(conn, token, score):
@@ -109,22 +41,6 @@ def update_user_score_in_mysql(conn, token, score):
     """
     conn.execute('update user set best_score=%s where token=%s and best_score<%s', score, token, score)
     return conn.get('select best_score from user where token=%s', token).best_score
-
-@log_decorator
-def _set_starttime(token):
-    """
-    设置用户开始答题的时间戳
-    """
-    pass
-
-@log_decorator
-def  _get_filters_list(token):
-    """
-    从内存缓存中获取已经答的题q_id列表
-    """
-    global redis_conn
-    return list(redis_conn.smembers('%s:q_list'%token))
-
 
 def check_token(conn, token, login_name, res):
     """
@@ -154,23 +70,12 @@ def check_token(conn, token, login_name, res):
     else:
         return True
 
-@log_decorator
-def check_timeout(token, res):
-    """
-    验证用户答题时间限制, 60s
-    """ 
-    if time.time() - _get_starttime(token) >= base.TIMEOUT :
-        res['status'] = StatusCode.TIMEOUT
-        res['info']  = ErrorMsg[res['status']]
-        return False
-    return True
-
 def check_qtype(type, res):
     """
     >>> res = {}
-    >>> check_input(QType.JUDGE, res)
+    >>> check_qtype(QType.JUDGE, res)
     >>> print  res.get('info', None)
-    >>> check_input(5, res)
+    >>> check_qtype(5, res)
     >>> print  res.get('info', None)
     """
     if type not in range(1, 5):
@@ -200,53 +105,48 @@ def check_input(login_name, login_pwd, phone_num, res):
     else:
         return True
 
-def fetch_one(conn, token, type=QType.SELECT):  
-    """
-    >>> conn = connect_to_db()
-    >>> type = QType.SELECT
-    >>> token = 2
-    >>> q = fetch_one(conn, token, type)
-    >>> print q
-    """
-    filters = _get_filters_list(token)
-    return _fetch_one(conn, type, filters)
-
-def _fetch_one(conn, type, filters=[]):
+def fetch_one(conn, type=QType.SELECT, filters=[]):  
     """
     >>> conn = connect_to_db()
     >>> type = QType.SELECT
     >>> filters = []
-    >>> q = _fetch_one(conn, type, filters)
+    >>> q = fetch_one(conn, type, filters)
     >>> print q
     """
-    # sql = 'select q_id, note from question limit 1 where `type`=%s and q_id not in %s'
-    # qu = conn.get(sql, type, tuple(filters)) 
-    sql = 'select q_id, note from question where `type`=%s limit 1'
-    qu = conn.get(sql, type) 
+    # 随机选择一道没答过的题目
+    if isinstance(filters, list):
+        filters = map(lambda e: str(e), filters)
+        filters = '('+', '.join(filters)+ ')'
+        sql = 'select q_id, note from question where `type`=%s and q_id not in %s limit 1'%(type, filters)
+        qu = conn.get(sql) 
+    else:
+        sql = 'select q_id, note from question where `type`=%s limit 1'%type
+        qu = conn.get(sql) 
     if qu is None:
         print  '选不到合适的题....'
         return {}
     else:
-        # 随机选择一道没答过的题目, 还没添filters
         sql = 'select o_id, note from options where q_id=%s'
         opts = conn.query(sql, qu.q_id)
         # 筛选题目对应的答案
         for index, value in enumerate(opts):
             opts[index] = dict(value)
-        # 如果是拼图题,需要打乱答案的顺序
+        # 如果是拼图题,需要打乱顺序
         if type == QType.PINTU:
-            pass 
+            import random
+            random.shuffle(opts)
         info = {
             'question': dict(qu),
             'options': opts,
         }
         return info
+
 @log_decorator
-def set_ok(res):
+def set_msg(res):
     """
-    设置状态码为处理成功
+    根据状态吗设置信息
     """
-    res['status'] = StatusCode.OK
+    res.setdefault('status', StatusCode.OK)
     res['info']  = ErrorMsg[res['status']]
 
 @log_decorator
@@ -288,7 +188,7 @@ def check_times_out(conn, token, res):
     """
     sql = 'select times from user where token=%s'
     msg = conn.get(sql, token)
-    if not msg.times < base.MAX_TIMES:
+    if not msg.times < MAX_TIMES:
         res['status'] = StatusCode.TIMES_OUT
         res['info']  = ErrorMsg[res['status']] 
         return False
@@ -307,8 +207,19 @@ def is_right(conn, q_id, o_id):
     """
     根据类型和题目和选项判断答案是否正确
     """
-    msg = conn.get('select 1 from question where q_id=%s', q_id)
-    if not msg: return False
-    sql = 'select 1 from options where q_id=%s and o_id=%s and is_ans=%s'
-    msg = conn.get(sql, q_id, o_id, True)
-    return True if msg else False 
+    # 如果是拼图题
+    sql = 'select `type` from question where q_id=%s'
+    type = conn.get(sql, q_id).get('type')
+    if type == QType.PINTU:
+        return o_id in PINTU_ANS
+    else: 
+        msg = conn.get('select 1 from question where q_id=%s', q_id)
+        if not msg: return False
+        sql = 'select 1 from options where q_id=%s and o_id=%s and is_ans=%s'
+        msg = conn.get(sql, q_id, o_id, True)
+        return True if msg else False 
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
