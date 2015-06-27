@@ -94,6 +94,7 @@ class Memcache(MemoryCache):
 
     def append(self, key, value):
         old = self._conn.get(key)
+        if not old: old = []
         if isinstance(old, list) or isinstance(old, str):
             old.append(value)
             self._conn.set(key, old)
@@ -171,7 +172,8 @@ class Redis(MemoryCache):
     
     def append(self, key, value):
         try:
-            self._conn.get(key)
+            if not self._conn.get(key):
+                raise redis.ResponseError
             self._conn.append(key, value)
         except redis.ResponseError:
             self._conn.sadd(key, value)
@@ -245,7 +247,7 @@ class UserCache(Redis):
 
     def check_timeout(self, token):
         """
-        验证用户答题时间限制, 60s
+        验证用户答题时间限制
         """ 
         import time
         if time.time() - self._get_starttime(token) >= TIMEOUT :
@@ -275,6 +277,11 @@ class UserCache(Redis):
         从内存缓存中根据token获取用户的总得分
         """ 
         return self.get('%s:score'%token)    
+
+    def check_dump(self, token, q_id):
+        """
+        防止重复刷同一道题
+        """ 
 
 if __name__ == '__main__':
     import doctest

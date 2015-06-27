@@ -3,6 +3,6 @@
 
 
 METHOD_LIST = ['login', 'isRight', 'getFinalScore']
-TIMEOUT = 60
+TIMEOUT = 60000000000000
 MAX_TIMES = 5
 
