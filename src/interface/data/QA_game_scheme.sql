@@ -21,7 +21,7 @@ create table if not exists `user`(
 -- 问题表
 create table if not exists `question`(
     q_id int not null auto_increment,
-    note text not null comment '问题描述',
+    note text null comment '问题描述',
     `type`  tinyint(2) not null comment '问题类型, 1 选择题, 2 表示判断题, 3表示拼图题, 4表示记忆题',
     s_id tinyint(2) null comment '所属校区',
     `meterial` text null comment '专门针对材料题',

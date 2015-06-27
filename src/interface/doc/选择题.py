@@ -21,7 +21,7 @@ conn = connect_to_db()
 
 def insert(conn, question, s_id, options, ans):
     conn.execute('start transaction')
-    type = QType.MEMORY
+    type = QType.SELECT
     sql = 'insert into question values(NULL, %s, %s, %s, NULL)'
     conn.execute(sql, question, type, s_id)
     sql = 'select max(q_id) as q_id from question'

@@ -20,9 +20,14 @@ class CampusArea(object):
     WEST = 3
     ZHUHAI = 4
 
+class AnswerStatus(object):
+    UNANSWER = 0
+    WRONG = 1
+    RIGHT = 2
+
 Campus = {
     '珠海': CampusArea.ZHUHAI,
-    '南校区': CampusArea.SOUTH,
+    '南校': CampusArea.SOUTH,
     '东校': CampusArea.EAST,
     '北校': CampusArea.WEST,
 }
