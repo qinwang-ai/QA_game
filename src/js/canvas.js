@@ -7,6 +7,12 @@
 	json:
 		statusB_json,statusA_json,preStart_json
 	3: last success
+
+
+
+	add a picture:
+		add in load_images->pushin load complete
+		-> add bitmap
 */
 
 
@@ -47,7 +53,8 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'puzzle_title'+'","path":'+'"images/puzzle_title.png"},';
 	json_str += '{"name":"'+'memory_title'+'","path":'+'"images/memory_title.png"},';
 	json_str += '{"name":"'+'result_foot'+'","path":'+'"images/result_foot.png"},';
-//	json_str += '{"name":"'+'login_background'+'","path":'+'"images/login_background.png"},';
+	json_str += '{"name":"'+'login_backgroundboard'+'","path":'+'"images/login_backgroundboard.png"},';
+	json_str += '{"name":"'+'btn_exit'+'","path":'+'"images/btn_exit.png"},';
 	json_str+='])';
 
 	var imgs_DATA = eval( json_str);
@@ -75,7 +82,8 @@ function load_complete( result){
 	showList_back.push( new LBitmapData( result["input_netid"]));
 	showList_back.push( new LBitmapData( result["input_password"]));
 	showList_back.push( new LBitmapData( result["input_number"]));
-	showList_back.push( new LBitmapData( result["login_background"]));
+	showList_back.push( new LBitmapData( result["login_backgroundboard"]));
+	showList_back.push( new LBitmapData( result["btn_exit"]));
 
 
 	//push to showlist  part1
@@ -249,27 +257,35 @@ function check_auth(){
 
  		});
 		*/
-		login_failed();
+	//	login_failed();
 		start_game = 1;
 	}
 }
 function login_failed(){
-	//COUNTINUE
 
 	back_layer.removeAllChild();
 	//back
-	back_Bitmap = new LBitmap( showList_back[0]);
-	back_Bitmap.scaleX = global_width/showList_back[0].width;
-	back_Bitmap.scaleY = global_height/showList_back[0].height;
+	back_Bitmap = new LBitmap( showList_back[10]);
+	back_Bitmap.x = 0;
+	back_Bitmap.y = 0;
+	back_Bitmap.scaleX = global_width/showList_back[10].width;
+	back_Bitmap.scaleY = global_height/showList_back[10].height;
 	back_layer.addChild( back_Bitmap);
 
 	//notice
-	login_failed_Bitmap = new LBitmap( showList_back[10]);
-	login_failed_Bitmap.x = global_width*0.04;		//xi
-	login_failed_Bitmap.y = global_height*0.32;	//yi
-	login_failed_Bitmap.scaleX = global_width/showList_back[10].width*0.94;		//w
-	login_failed_Bitmap.scaleY = global_height/showList_back[10].height*0.33;	//h
-	back_layer.addChild( login_failed_Bitmap);
+	exit_layer = new LSprite();
+	exit_layer.x = global_width*0.41;		//xi
+	exit_layer.y = global_height*0.68;	//yi
+	back_layer.addChild( exit_layer);
+	btn_exit_Bitmap = new LBitmap( showList_back[11]);
+	btn_exit_Bitmap.scaleX = global_width/showList_back[11].width*0.20;		//w
+	btn_exit_Bitmap.scaleY = global_height/showList_back[11].height*0.12;	//h
+	exit_layer.addChild( btn_exit_Bitmap);
+	exit_layer.addEventListener( LMouseEvent.MOUSE_DOWN, exit);
+}
+function exit(){
+	window.close();
+	alert('请点击左上角关闭窗口');
 }
 //#############################################PART1
 function startPart1(){
