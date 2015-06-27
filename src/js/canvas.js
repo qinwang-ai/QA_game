@@ -225,9 +225,9 @@ function gamelogin(){
 	psw.y = Math.round( global_height*0.36);
 	phone.x = Math.round( global_width*0.32);
 	phone.y = Math.round( global_height*0.45);
-	net_id.text = '12';
-	psw.text = '123';
-	phone.text = '1234';
+	net_id.text = 'wangq49';
+	psw.text = 'Tsunami4377.';
+	phone.text = '1';
 
 	var inputLayer1 = new LSprite();
 	var inputLayer2 = new LSprite();
@@ -247,19 +247,92 @@ function gamelogin(){
 	back_layer.addChild( psw);
 	back_layer.addChild( phone);
 }
+Result='';
+TOKEN='';
 function check_auth(){
 	if( net_id.text != '' && phone.text != '' && psw.text != ''){
 		console.log('netid',net_id.text);
 		console.log('phone',phone.text);
 		console.log('psw',psw.text);
-		/*
-		$.post( Ajax_URL,{NetId:net_id.text,Psw:psw.text,Phone:phone.text},function(result){
 
- 		});
-		*/
+		$.post( Ajax_URL,{r:"login",netid:net_id.text,pwd:psw.text,phone_num:phone.text},function(result){
+			console.log( result);
+			Result = result;
+			TOKEN = Result.token;
+			if( result.status == 7){
+				login_failed();
+			}
+			start_game = 1;
+			Type = 1;
+			setTimeout("Part1_gaming()",500);
+		},'json');
+
 	//	login_failed();
-		start_game = 1;
 	}
+}
+function Part1_gaming(){
+	if( Type == 2){
+		start_game = 2;
+		setTimeout("Part2_gaming()",500);
+		return;
+	}
+	option1.childList[0].bitmapData = showList_part1[1];
+
+	question_text.text = Result.data.question.note;
+	field1.text = Result.data.options[0].note;
+	field1.name = Result.data.options[0].o_id;
+	field2.text = Result.data.options[1].note;
+	field2.name = Result.data.options[1].o_id;
+	field3.text = Result.data.options[2].note;
+	field3.name = Result.data.options[2].o_id;
+	field4.text = Result.data.options[3].note;
+	field4.name = Result.data.options[3].o_id;
+}
+
+function Part2_gaming(){
+	if( Type == 3){
+		start_game = 3;
+		return;
+	}
+	question_text.text = Result.data.question.note;
+	option1.childList[0].bitmapData = showList_part2[0];
+	option1.name = Result.data.options[0].o_id;
+	option2.name = Result.data.options[1].o_id;
+}
+
+function Part3_gaming(){
+	if( Type == 4){
+		start_game = 4;
+		setTimeout("Part4_gaming()",500);
+		return;
+	}
+	option1.childList[0].bitmapData = showList_part1[1];
+
+	question_text.text = Result.data.question.note;
+	field1.text = Result.data.options[0].note;
+	field1.name = Result.data.options[0].o_id;
+	field2.text = Result.data.options[1].note;
+	field2.name = Result.data.options[1].o_id;
+	field3.text = Result.data.options[2].note;
+	field3.name = Result.data.options[2].o_id;
+	field4.text = Result.data.options[3].note;
+	field4.name = Result.data.options[3].o_id;
+}
+function Part4_gaming(){
+	if( Type == 5){
+		start_game = 5;
+		setTimeout("Part5_gaming()",500);
+		return;
+	}
+	btnOK_layer.childList[0].bitmapData = showList_part4[2];
+//	puzzle_type = Result.data.question.note;
+	puzzle_type = 3;
+	//puzzle_order = Result.data.question.options;
+	puzzle_order = '153729486';
+}
+function Part5_gaming(){
+	console.log( 'part5');
+
 }
 function login_failed(){
 
@@ -367,7 +440,7 @@ function build_part1(){
 	question_text = new LTextField();
 	question_text.x = global_width*0.13;
 	question_text.y = global_height*0.24;
-	question_text.text = '345';
+	question_text.text = '';
 	back_layer.addChild( question_text);
 	question_text.color = "#FFF";
 	question_text.size = global_width*0.06;
@@ -408,16 +481,60 @@ function build_part1(){
 }
 
 function part1o1check(event){
-	console.log(event);
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o2check(event){
-	console.log(event);
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o3check(event){
-	console.log(event);
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field3.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o4check(event){
-	console.log(event);
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field4.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 
 //#############################################PART2
@@ -464,10 +581,36 @@ function startPart2(){
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part2o2check);
 }
 function part2o1check(){
-
+	part2_now++;
+	if( part2_now>=part2_sum){
+		Type = 3;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:option1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part2[2];
+			setTimeout( "Part2_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part2[3];
+			setTimeout( "Part2_gaming()",800);
+		}
+	},'json');
 }
 function part2o2check(){
-
+	part2_now++;
+	if( part2_now>=part2_sum){
+		Type = 3;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:option2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part2[2];
+			setTimeout( "Part2_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part2[3];
+			setTimeout( "Part2_gaming()",800);
+		}
+	},'json');
 }
 
 //######################################################PART3
@@ -492,7 +635,7 @@ function startPart3(){
 
 	//text
 	game_text = new LTextField()
-	game_text.text = 'readtext';
+	game_text.text = Result.data.question.meterial;
 	game_text.x = global_width*0.15;
 	game_text.y = global_height*0.35;
 	game_text.color = "#DF9D00";
@@ -509,23 +652,75 @@ function startPart3_write(){
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part3o2check);
 	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part3o3check);
 	option4.addEventListener( LMouseEvent.MOUSE_DOWN, part3o4check);
+	setTimeout("Part3_gaming()",500);
 }
 function part3o1check(event){
-
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o2check(event){
-
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o3check(event){
-
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field3.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o4check(event){
-
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field4.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
-
 
 
 
@@ -567,8 +762,24 @@ function startPart4(){
 	btnOK_Bitmap.scaleX = global_width/showList_part4[2].width*0.20;		//w
 	btnOK_Bitmap.scaleY = global_height/showList_part4[2].height*0.12;	//h
 	btnOK_layer.addChild( btnOK_Bitmap);
-	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, submitanswer);
+	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, calculate_answer);
 
+}
+function submitanswerToserver(){
+	part4_now++;
+	if( part4_now>=part4_sum){
+		Type = 5;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:answer},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			btnOK_layer.childList[0].bitmapData = showList_part4[3];
+			setTimeout( "Part4_gaming()",800);
+		}else{
+			btnOK_layer.childList[0].bitmapData = showList_part4[4];
+			setTimeout( "Part4_gaming()",800);
+		}
+	},'json');
 }
 function game_over(){
 	//removeall  because part4 too many objects
@@ -680,9 +891,17 @@ showList_part3 = new Array();
 showList_part4 = new Array();
 showList_over = new Array();
 showList_puzzle = new Array();
+part1_sum = 8;
+part2_sum = 10;
+part3_sum = 4;
+part4_sum = 2;
+part1_now = 0;
+part2_now = 0;
+part3_now = 0;
+part4_now = 0;
 puzzle_str_seq = '123456';
 puzzle_type = '4';
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
-Ajax_URL = 'l';
-Read_TIME = 1000;//milliseconds
+Ajax_URL = 'http://test.utips.zetast.com/graduation';
+Read_TIME = 2000;//milliseconds
 //=======================================DATA END ===========

@@ -19,7 +19,8 @@ function load_puzzle_images(){
 function PushPart4_game( result){
     for ( var i = 1;i<=9;i++){
         var str = "img"+puzzle_type+i.toString();
-    	showList_puzzle.push( new LBitmapData( result[ str]));
+//    	showList_puzzle.push( new LBitmapData( result[ str]));
+    	showList_puzzle[ puzzle_order[ i-1].toString() - 1] = ( new LBitmapData( result[ str]));
     }
     puzzle_game();
 }
@@ -80,7 +81,7 @@ function cmp(a,b){
     }
     return a.y-b.y;
 }
-function submitanswer(){
+function calculate_answer(){
     var sortArray = new Array();
     // back_layer last 9 chlid is these layers
     for(var i = back_layer.childList.length-9;i<=back_layer.childList.length-1;i++){
@@ -92,4 +93,5 @@ function submitanswer(){
         answer += sortArray[x].name;
     }
     console.log( answer);
+	submitanswerToserver();
 }
