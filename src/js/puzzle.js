@@ -70,7 +70,6 @@ function swap(){
     clickB.x = x;
     clickB.y = y;
 
-
     clickA = 0;
     clickB = 0;
 }
