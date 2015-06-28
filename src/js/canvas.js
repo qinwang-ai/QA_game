@@ -363,8 +363,11 @@ function Part4_gaming(){
 //	puzzle_order = '153729486';
 }
 function Part5_gaming(){
-	console.log( 'part5');
-//	result_text1.text = Result;
+//	console.log( 'part5');
+	//#conitue
+	result_text1.text = Result.score;
+	result_text2.text = Result.cost_time;
+	result_text3.text = Result.hit_percent;
 }
 function login_failed(){
 
@@ -701,6 +704,8 @@ function startPart3(){
 
 	//text
 	game_text = new LTextField()
+	game_text.setWordWrap( true);
+	game_text.width = global_width* 0.7;
 	game_text.text = Result.data.question.meterial;
 	game_text.x = global_width*0.15;
 	game_text.y = global_height*0.35;
@@ -1007,5 +1012,5 @@ puzzle_str_seq = '123456';
 puzzle_type = '4';
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
 Ajax_URL = 'http://test.utips.zetast.com/graduation';
-Read_TIME = 2000;//milliseconds
+Read_TIME = 10000;//milliseconds
 //=======================================DATA END ===========
