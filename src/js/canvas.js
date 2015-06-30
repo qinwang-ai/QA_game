@@ -155,6 +155,7 @@ function build_background(){
 	time_text = new LTextField();
 	time_text.x = global_width*0.79;
 	time_text.y = global_height*0.05;
+	time_text.size = global_width*0.05;
 	time_text.text = '00:00';
 
 	start_layer = new LSprite();
@@ -491,8 +492,12 @@ function build_part1(){
 	field2 = new LTextField();
 	field3 = new LTextField();
 	field4 = new LTextField();
+//size
+	field1.size = global_width*0.03;
+	field2.size = global_width*0.03;
+	field3.size = global_width*0.03;
+	field4.size = global_width*0.03;
 
-	//field1.size = global_width/
 	field1.x = global_width*0.07;		//xi
 	field1.y = global_height*0.47;		//yi
 
@@ -707,8 +712,8 @@ function startPart3(){
 	game_text.setWordWrap( true);
 	game_text.width = global_width* 0.7;
 	game_text.text = Result.data.question.meterial;
-	game_text.x = global_width*0.15;
-	game_text.y = global_height*0.35;
+	game_text.x = global_width*0.14;
+	game_text.y = global_height*0.31;
 	game_text.color = "#DF9D00";
 
 	back_layer.addChild( game_text);
