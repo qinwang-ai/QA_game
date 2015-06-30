@@ -8,6 +8,10 @@ sys.setdefaultencoding('utf-8')
 from config.enum import *
 from config.database import *
 
+def delete(conn, type):
+    sql = 'delete from question where `type`=%s'
+    return conn.execute(sql, type)
+
 def connect_to_db():
     import torndb
     """
@@ -39,7 +43,7 @@ def insert(conn, question, s_id, options, ans):
 filename = 'doc/3.xlsx'
 data = xlrd.open_workbook(filename)
 sheets = data.sheets()
-
+delete(conn, type=QType.SELECT)
 for sheet in sheets:
     s_id = Campus[sheet.name.encode('utf-8')]
     for i in xrange(1, sheet.nrows):

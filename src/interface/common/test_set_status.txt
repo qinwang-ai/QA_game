@@ -1,0 +1,5 @@
+>>> from common.functions import set_status
+>>> from config.enum import *
+>>> res = {}
+>>> set_status(res, StatusCode.BAD_REQUEST)
+>>> res

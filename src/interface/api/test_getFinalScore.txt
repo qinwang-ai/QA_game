@@ -1,0 +1,4 @@
+>>> from api.api import getFinalScore
+>>> token ='fe5b38981d6c11e588bb74e543434a0f'
+>>> params = {'token': token}
+>>> print getFinalScore(params)

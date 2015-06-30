@@ -19,6 +19,10 @@ def connect_to_db():
 
 conn = connect_to_db()
 
+def delete(conn, type):
+    sql = 'delete from question where `type`=%s'
+    return conn.execute(sql, type)
+
 def insert(conn, meterial, question, s_id, options, ans):
     conn.execute('start transaction')
     type = QType.MEMORY
@@ -39,6 +43,7 @@ def insert(conn, meterial, question, s_id, options, ans):
 filename = 'doc/1.xlsx'
 data = xlrd.open_workbook(filename)
 sheets = data.sheets()
+delete(conn, type=QType.MEMORY)
 
 for sheet in sheets:
     s_id = Campus[sheet.name.encode('utf-8')]

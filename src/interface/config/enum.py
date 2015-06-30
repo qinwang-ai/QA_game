@@ -3,9 +3,9 @@
 
 class QType(object):
     SELECT = 1
-    PINTU = 2
-    JUDGE = 3
-    MEMORY = 4
+    PINTU = 4
+    JUDGE = 2
+    MEMORY = 3
 
 TypeScore = {
     QType.SELECT: 3,
@@ -28,6 +28,7 @@ class AnswerStatus(object):
 Campus = {
     '珠海': CampusArea.ZHUHAI,
     '南校': CampusArea.SOUTH,
+    '南校区': CampusArea.SOUTH,
     '东校': CampusArea.EAST,
     '北校': CampusArea.WEST,
 }
@@ -41,6 +42,7 @@ class StatusCode(object):
     TIMEOUT = 6
     TIMES_OUT = 7
     WRONG_ANSER = 8
+    BAD_REQUEST = 9
     OK = 0
     
 ErrorMsg = {
@@ -52,4 +54,5 @@ ErrorMsg = {
     StatusCode.OK: '请求合法',
     StatusCode.TIMES_OUT: '超过答题次数限制',
     StatusCode.WRONG_ANSER: '答案错误',
+    StatusCode.BAD_REQUEST: '请求参数解析错误',
 }

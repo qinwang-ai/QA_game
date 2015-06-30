@@ -6,7 +6,6 @@ use QA_game;
 create table if not exists `user`(
     `u_id` int not null auto_increment,
     `login_name` varchar(10) not null comment '登陆用户名',
-    `login_pwd`  varchar(15) not null comment '登陆密码',
     `phone_num`  varchar(11) not null comment '用户手机号',
     `times` tinyint(2)  not null comment '用户答题次数',
     `best_score` int  not null comment '个人最高分数',
