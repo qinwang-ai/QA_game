@@ -7,6 +7,12 @@
 	json:
 		statusB_json,statusA_json,preStart_json
 	3: last success
+
+
+
+	add a picture:
+		add in load_images->pushin load complete
+		-> add bitmap
 */
 
 
@@ -47,7 +53,8 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'puzzle_title'+'","path":'+'"images/puzzle_title.png"},';
 	json_str += '{"name":"'+'memory_title'+'","path":'+'"images/memory_title.png"},';
 	json_str += '{"name":"'+'result_foot'+'","path":'+'"images/result_foot.png"},';
-//	json_str += '{"name":"'+'login_background'+'","path":'+'"images/login_background.png"},';
+	json_str += '{"name":"'+'login_backgroundboard'+'","path":'+'"images/login_backgroundboard.png"},';
+	json_str += '{"name":"'+'btn_exit'+'","path":'+'"images/btn_exit.png"},';
 	json_str+='])';
 
 	var imgs_DATA = eval( json_str);
@@ -75,7 +82,8 @@ function load_complete( result){
 	showList_back.push( new LBitmapData( result["input_netid"]));
 	showList_back.push( new LBitmapData( result["input_password"]));
 	showList_back.push( new LBitmapData( result["input_number"]));
-	showList_back.push( new LBitmapData( result["login_background"]));
+	showList_back.push( new LBitmapData( result["login_backgroundboard"]));
+	showList_back.push( new LBitmapData( result["btn_exit"]));
 
 
 	//push to showlist  part1
@@ -117,6 +125,19 @@ function load_complete( result){
 
 	build_background();
 }
+TIME = 0;
+function time_plus(){
+	TIME++;
+	minutes = Math.floor( TIME/60);
+	seconds = TIME%60;
+	if( minutes<10){
+		minutes = '0'+minutes.toString();
+	}
+	if( seconds<10){
+		seconds = '0'+seconds.toString();
+	}
+	time_text.text = minutes + ":" + seconds;
+}
 function build_background(){
 //showlist to append show
 	back_Bitmap = new LBitmap( showList_back[0]);
@@ -130,6 +151,11 @@ function build_background(){
 	title_Bitmap.x = global_width*0.07; //xi
 	title_Bitmap.y = global_height*0.23; //yi
 	back_layer.addChild( title_Bitmap);
+
+	time_text = new LTextField();
+	time_text.x = global_width*0.79;
+	time_text.y = global_height*0.05;
+	time_text.text = '00:00';
 
 	start_layer = new LSprite();
 	start_Bitmap = new LBitmap( showList_back[2]);
@@ -217,9 +243,9 @@ function gamelogin(){
 	psw.y = Math.round( global_height*0.36);
 	phone.x = Math.round( global_width*0.32);
 	phone.y = Math.round( global_height*0.45);
-	net_id.text = '12';
-	psw.text = '123';
-	phone.text = '1234';
+	net_id.text = 'wangq49';
+	psw.text = 'Tsunami4377.';
+	phone.text = '1';
 
 	var inputLayer1 = new LSprite();
 	var inputLayer2 = new LSprite();
@@ -239,37 +265,135 @@ function gamelogin(){
 	back_layer.addChild( psw);
 	back_layer.addChild( phone);
 }
+Result='';
+TOKEN='';
 function check_auth(){
 	if( net_id.text != '' && phone.text != '' && psw.text != ''){
-		console.log('netid',net_id.text);
-		console.log('phone',phone.text);
-		console.log('psw',psw.text);
-		/*
-		$.post( Ajax_URL,{NetId:net_id.text,Psw:psw.text,Phone:phone.text},function(result){
 
- 		});
-		*/
-		login_failed();
-		start_game = 1;
+		$.post( Ajax_URL,{r:"login",netid:net_id.text,pwd:psw.text,phone_num:phone.text},function(result){
+			Result = result;
+			TOKEN = Result.token;
+			if( result.status == 7){
+				login_failed();
+			}
+			start_game = 1;
+			Type = 1;
+			setTimeout("Part1_gaming()",500);
+		},'json');
+
+	//	login_failed();
 	}
 }
+function Part1_gaming(){
+	if( Type == 2){
+		start_game = 2;
+		setTimeout("Part2_gaming()",500);
+		return;
+	}
+	option1.childList[0].bitmapData = showList_part1[1];
+	option2.childList[0].bitmapData = showList_part1[1];
+	option3.childList[0].bitmapData = showList_part1[1];
+	option4.childList[0].bitmapData = showList_part1[1];
+
+	question_text.text = Result.data.question.note;
+	field1.text = Result.data.options[0].note;
+	field1.name = Result.data.options[0].o_id;
+	field2.text = Result.data.options[1].note;
+	field2.name = Result.data.options[1].o_id;
+	field3.text = Result.data.options[2].note;
+	field3.name = Result.data.options[2].o_id;
+	field4.text = Result.data.options[3].note;
+	field4.name = Result.data.options[3].o_id;
+	option1.mouseEnabled = true;
+	option2.mouseEnabled = true;
+	option3.mouseEnabled = true;
+	option4.mouseEnabled = true;
+}
+
+function Part2_gaming(){
+	if( Type == 3){
+		start_game = 3;
+		return;
+	}
+	question_text.text = Result.data.question.note;
+	option1.childList[0].bitmapData = showList_part2[0];
+	option2.childList[0].bitmapData = showList_part2[1];
+	option1.name = Result.data.options[0].o_id;
+	option2.name = Result.data.options[1].o_id;
+	option1.mouseEnabled = true;
+	option2.mouseEnabled = true;
+}
+
+function Part3_gaming(){
+	if( Type == 4){
+		setTimeout("Part4_gaming()",500);
+		return;
+	}
+	option1.childList[0].bitmapData = showList_part1[1];
+	option2.childList[0].bitmapData = showList_part1[1];
+	option3.childList[0].bitmapData = showList_part1[1];
+	option4.childList[0].bitmapData = showList_part1[1];
+
+	question_text.text = Result.data.question.note;
+	field1.text = Result.data.options[0].note;
+	field1.name = Result.data.options[0].o_id;
+	field2.text = Result.data.options[1].note;
+	field2.name = Result.data.options[1].o_id;
+	field3.text = Result.data.options[2].note;
+	field3.name = Result.data.options[2].o_id;
+	field4.text = Result.data.options[3].note;
+	field4.name = Result.data.options[3].o_id;
+	option1.mouseEnabled = true;
+	option2.mouseEnabled = true;
+	option3.mouseEnabled = true;
+	option4.mouseEnabled = true;
+}
+function Part4_gaming(){
+	if( Type == 5){
+		start_game = 5;
+		setTimeout("Part5_gaming()",500);
+		return;
+	}
+
+	start_game = 4;
+
+	puzzle_type = Result.data.question.note;
+//	puzzle_type = 3;
+	puzzle_order = Result.data.options;
+//	puzzle_order = '153729486';
+}
+function Part5_gaming(){
+//	console.log( 'part5');
+	//#conitue
+	result_text1.text = Result.score;
+	result_text2.text = Result.cost_time;
+	result_text3.text = Result.hit_percent;
+}
 function login_failed(){
-	//COUNTINUE
 
 	back_layer.removeAllChild();
 	//back
-	back_Bitmap = new LBitmap( showList_back[0]);
-	back_Bitmap.scaleX = global_width/showList_back[0].width;
-	back_Bitmap.scaleY = global_height/showList_back[0].height;
+	back_Bitmap = new LBitmap( showList_back[10]);
+	back_Bitmap.x = 0;
+	back_Bitmap.y = 0;
+	back_Bitmap.scaleX = global_width/showList_back[10].width;
+	back_Bitmap.scaleY = global_height/showList_back[10].height;
 	back_layer.addChild( back_Bitmap);
 
 	//notice
-	login_failed_Bitmap = new LBitmap( showList_back[10]);
-	login_failed_Bitmap.x = global_width*0.04;		//xi
-	login_failed_Bitmap.y = global_height*0.32;	//yi
-	login_failed_Bitmap.scaleX = global_width/showList_back[10].width*0.94;		//w
-	login_failed_Bitmap.scaleY = global_height/showList_back[10].height*0.33;	//h
-	back_layer.addChild( login_failed_Bitmap);
+	exit_layer = new LSprite();
+	exit_layer.x = global_width*0.41;		//xi
+	exit_layer.y = global_height*0.68;	//yi
+	back_layer.addChild( exit_layer);
+	btn_exit_Bitmap = new LBitmap( showList_back[11]);
+	btn_exit_Bitmap.scaleX = global_width/showList_back[11].width*0.20;		//w
+	btn_exit_Bitmap.scaleY = global_height/showList_back[11].height*0.12;	//h
+	exit_layer.addChild( btn_exit_Bitmap);
+	exit_layer.addEventListener( LMouseEvent.MOUSE_DOWN, exit);
+}
+function exit(){
+	window.close();
+	alert('请点击左上角关闭窗口');
 }
 //#############################################PART1
 function startPart1(){
@@ -294,6 +418,9 @@ function startPart1(){
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part1o2check);
 	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part1o3check);
 	option4.addEventListener( LMouseEvent.MOUSE_DOWN, part1o4check);
+
+	back_layer.addChild( time_text);
+	setInterval( 'time_plus()', 1000);
 }
 function build_part1(){
 	game_blackboard_Bitmap = new LBitmap( showList_part1[0]);
@@ -349,12 +476,14 @@ function build_part1(){
 
 //question text
 	question_text = new LTextField();
+	question_text.setWordWrap( true);
+	question_text.width = global_width*0.75;
 	question_text.x = global_width*0.13;
 	question_text.y = global_height*0.24;
-	question_text.text = '345';
+	question_text.text = '';
 	back_layer.addChild( question_text);
 	question_text.color = "#FFF";
-	question_text.size = global_width*0.06;
+	question_text.size = global_width*0.03;
 
 
 //four text field
@@ -392,16 +521,84 @@ function build_part1(){
 }
 
 function part1o1check(event){
-	console.log(event);
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o2check(event){
-	console.log(event);
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option2.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option2.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o3check(event){
-	console.log(event);
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field3.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option3.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option3.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 function part1o4check(event){
-	console.log(event);
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part1_now++;
+	if( part1_now>=part1_sum){
+		Type = 2;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field4.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option4.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part1_gaming()",800);
+		}else{
+			option4.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part1_gaming()",800);
+		}
+	},'json');
 }
 
 //#############################################PART2
@@ -448,16 +645,47 @@ function startPart2(){
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part2o2check);
 }
 function part2o1check(){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	part2_now++;
+	if( part2_now>=part2_sum){
+		Type = 3;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:option1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part2[2];
+			setTimeout( "Part2_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part2[3];
+			setTimeout( "Part2_gaming()",800);
+		}
+	},'json');
 }
 function part2o2check(){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	part2_now++;
+	if( part2_now>=part2_sum){
+		Type = 3;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:option2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option2.childList[0].bitmapData = showList_part2[2];
+			setTimeout( "Part2_gaming()",800);
+		}else{
+			option2.childList[0].bitmapData = showList_part2[3];
+			setTimeout( "Part2_gaming()",800);
+		}
+	},'json');
 }
 
 //######################################################PART3
 function startPart3(){
 	back_layer.removeAllChild();
 	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( time_text);
 
 	//bitmap
 	gamepaper_Bitmap = new LBitmap( showList_part3[0]);
@@ -476,7 +704,9 @@ function startPart3(){
 
 	//text
 	game_text = new LTextField()
-	game_text.text = 'readtext';
+	game_text.setWordWrap( true);
+	game_text.width = global_width* 0.7;
+	game_text.text = Result.data.question.meterial;
 	game_text.x = global_width*0.15;
 	game_text.y = global_height*0.35;
 	game_text.color = "#DF9D00";
@@ -493,23 +723,91 @@ function startPart3_write(){
 	option2.addEventListener( LMouseEvent.MOUSE_DOWN, part3o2check);
 	option3.addEventListener( LMouseEvent.MOUSE_DOWN, part3o3check);
 	option4.addEventListener( LMouseEvent.MOUSE_DOWN, part3o4check);
+	setTimeout("Part3_gaming()",500);
 }
 function part3o1check(event){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field1.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option1.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option1.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o2check(event){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field2.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option2.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option2.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o3check(event){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field3.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option3.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option3.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
 
 function part3o4check(event){
-
+	option1.mouseEnabled = false;
+	option2.mouseEnabled = false;
+	option3.mouseEnabled = false;
+	option4.mouseEnabled = false;
+	part3_now++;
+	if( part3_now>=part3_sum){
+		Type = 4;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:field4.name},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			option4.childList[0].bitmapData = showList_part1[2];
+			setTimeout( "Part3_gaming()",800);
+		}else{
+			option4.childList[0].bitmapData = showList_part1[3];
+			setTimeout( "Part3_gaming()",800);
+		}
+	},'json');
 }
-
 
 
 
@@ -517,6 +815,7 @@ function part3o4check(event){
 function startPart4(){
 	back_layer.removeAllChild();
 	back_layer.addChild( back_Bitmap);
+	back_layer.addChild( time_text);
 
 //puzzle
 	puzzle_Bitmap = new LBitmap( showList_part4[0]);
@@ -551,8 +850,25 @@ function startPart4(){
 	btnOK_Bitmap.scaleX = global_width/showList_part4[2].width*0.20;		//w
 	btnOK_Bitmap.scaleY = global_height/showList_part4[2].height*0.12;	//h
 	btnOK_layer.addChild( btnOK_Bitmap);
-	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, submitanswer);
+	btnOK_layer.addEventListener( LMouseEvent.MOUSE_DOWN, calculate_answer);
 
+}
+function submitanswerToserver(){
+	btnOK_layer.mouseEnabled = false;
+	part4_now++;
+	if( part4_now>=part4_sum){
+		Type = 5;
+	}
+	$.post( Ajax_URL,{r:"isRight",token:TOKEN,type:Type,q_id:Result.data.question.q_id,o_id:answer},function(result){
+		Result = result;
+		if( Result.is_right == 1){
+			btnOK_layer.childList[0].bitmapData = showList_part4[3];
+			setTimeout( "Part4_gaming()",800);
+		}else{
+			btnOK_layer.childList[0].bitmapData = showList_part4[4];
+			setTimeout( "Part4_gaming()",800);
+		}
+	},'json');
 }
 function game_over(){
 	//removeall  because part4 too many objects
@@ -561,7 +877,6 @@ function game_over(){
 	back_layer.addChild( back_Bitmap);
 	back_layer.addChild( question_text);
 
-	//CONTINUE!!!
 	result_Bitmap = new LBitmap( showList_over[5]);
 	back_layer.addChild( result_Bitmap);
 	result_Bitmap.x = global_width*0.07;		//xi
@@ -591,18 +906,38 @@ function game_over(){
 	btn_share_layer.addChild( btn_share_Bitmap);
 
 	result_foot_Bitmap = new LBitmap( showList_over[6]);
-	result_foot_Bitmap.x = global_width*0.04; //xi
-	result_foot_Bitmap.y = global_height*0.84; //yi
-	result_foot_Bitmap.scaleX = global_width/showList_over[6].width*0.05;		//w
-	result_foot_Bitmap.scaleY = global_height/showList_over[6].height*0.03;	//h
+	result_foot_Bitmap.x = global_width*0; //xi
+	result_foot_Bitmap.y = global_height*0.81; //yi
+	result_foot_Bitmap.scaleX = global_width/showList_over[6].width*1;		//w
+	result_foot_Bitmap.scaleY = global_height/showList_over[6].height*0.19;	//h
 	back_layer.addChild( result_foot_Bitmap);
+
+	result_text1 = new LTextField();
+	result_text1.x = global_width*0.64;
+	result_text1.y = global_height*0.40;
+	result_text1.size = global_width*0.05;
+	result_text1.text = '123';
+	back_layer.addChild( result_text1);
+
+	result_text2 = new LTextField();
+	result_text2.x = global_width*0.52;
+	result_text2.y = global_height*0.44;
+	result_text2.size = global_width*0.05;
+	result_text2.text = '123';
+	back_layer.addChild( result_text2);
+
+	result_text3 = new LTextField();
+	result_text3.x = global_width*0.55;
+	result_text3.y = global_height*0.49;
+	result_text3.size = global_width*0.05;
+	result_text3.text = '123';
+	back_layer.addChild( result_text3);
 
 //addChild
 	back_layer.addChild( btn_foucs_layer);
 	back_layer.addChild( btn_share_layer);
 
 //addEventListener
-//	btn_foucs_layer.addEventListener( LMouseEvent.MOUSE_DOWN, fou)
 	btn_share_layer.addEventListener( LMouseEvent.MOUSE_DOWN, game_share);
 }
 
@@ -610,6 +945,7 @@ function game_share(){
 	//remove
 	back_layer.removeAllChild();
 	//add
+	document.title = "中大毕业考，我打败了"+result_text3.text+"毕业僧，不服来战!";
 	back_Bitmap = new LBitmap( showList_over[4]);
 	back_Bitmap.scaleX = global_width/showList_over[4].width;
 	back_Bitmap.scaleY = global_height/showList_over[4].height;
@@ -664,9 +1000,17 @@ showList_part3 = new Array();
 showList_part4 = new Array();
 showList_over = new Array();
 showList_puzzle = new Array();
+part1_sum = 1;//8;
+part2_sum = 1;//10;
+part3_sum = 1;//4;
+part4_sum = 2;
+part1_now = 0;
+part2_now = 0;
+part3_now = 0;
+part4_now = 0;
 puzzle_str_seq = '123456';
 puzzle_type = '4';
 start_game = 0;		// 0:not start or starting  1 :start_part1 now  2:start part2now
-Ajax_URL = 'l';
-Read_TIME = 1000;//milliseconds
+Ajax_URL = 'http://test.utips.zetast.com/graduation';
+Read_TIME = 10000;//milliseconds
 //=======================================DATA END ===========
