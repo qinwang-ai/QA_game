@@ -1,0 +1,22 @@
+>>> from common.functions import mysql_conn, fetch_one
+>>> from config.enum import *
+>>> q = fetch_one(mysql_conn, QType.SELECT)
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.SELECT, [])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.SELECT, [746])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.JUDGE, [1, 2, 3, 4, 5])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.MEMORY, [1, 4])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.PINTU, [])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.PINTU, [957])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.PINTU, [957, 958])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.PINTU, [957, 958, 959])
+>>> print q
+>>> q = fetch_one(mysql_conn, QType.PINTU, [957, 958, 959, 960])
+>>> print q

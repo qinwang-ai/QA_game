@@ -8,27 +8,30 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def getFanalSocre(kwargs):
+def getFinalScore(kwargs):
     """
     获取最终得分接口
-    >>> token ='67550f381ba411e5a519a1e4509cf3bc'
-    >>> params = {'token': token}
-    >>> print getFanalSocre(params)
     """
-    token = kwargs.get('token', None)
-    conn = connect_to_db() 
     res = {}
+    # 解析参数
+    try:
+        token = kwargs.get('token', None)
+    except:
+        set_status(res, StatusCode.BAD_REQUEST)
+    conn = connect_to_db() 
     user = UserCache()
     # 验证token
     if not check_token(conn, token, None, res):
         return res
     else:
         score = user.get_user_socre(token)
-        user.clear_user(token)
         best_score = update_user_score_in_mysql(conn, token, score)
-        res['score'] = score if score else 0
         res['best_score'] = best_score
-        set_msg(res)
+        res['score'] = score if score else 0
+        res['hit_percent'] = hit_percent(conn, score)
+        res['cost_time'] = user.get_cost_time(token)
+        user.clear_user(token)
+        set_status(res, StatusCode.OK)
         return res
  
 def isRight(kwargs):
@@ -60,12 +63,18 @@ def isRight(kwargs):
     >>> print res
     """
     # 解析参数
-    token = kwargs.get('token', None) 
-    conn = mysql_conn
-    type = kwargs.get('type', None)
-    q_id = kwargs.get('q_id', None)
-    o_id = kwargs.get('o_id', None)
     res = {}
+    try:
+        token = kwargs.get('token', None) 
+        type = int(kwargs.get('type', None))
+        if type == 5: return getFinalScore(kwargs)
+        q_id = int(kwargs.get('q_id', None))
+        o_id = int(kwargs.get('o_id', None))
+    except: 
+        # this is a dummy line
+        set_status(res, StatusCode.BAD_REQUEST)
+        return res
+    conn = mysql_conn
     user = UserCache()
 
     # 验证token
@@ -73,8 +82,9 @@ def isRight(kwargs):
         return res
     # 验证是否超时
     elif not user.check_timeout(token):
-        res['status'] = StatusCode.TIMEOUT
-        set_msg(res)
+        set_status(res, StatusCode.TIMEOUT)
+        return res
+    elif not check_qtype(type, res):
         return res
     else:
         # 验证答案
@@ -95,7 +105,7 @@ def isRight(kwargs):
         # 题id加到内存缓存列表中
         user.add_question(token, q['question']['q_id'])
         # 设置成功状态码
-        set_msg(res)
+        set_status(res, StatusCode.OK)
         return res
            
 def login(kwargs):
@@ -110,12 +120,15 @@ def login(kwargs):
     >>> res = login(params)
     >>> print res
     """
-    # 获取各个参数
-    login_name = kwargs.get('netid', None)
-    login_pwd = kwargs.get('pwd', None)
-    phone_num = kwargs.get('phone_num', None)
-    token = kwargs.get('token', None) 
     res = {}
+    # 获取各个参数
+    try:
+        login_name = kwargs.get('netid', None)
+        login_pwd = kwargs.get('pwd', None)
+        phone_num = kwargs.get('phone_num', None)
+        token = kwargs.get('token', None) 
+    except:
+        set_status(res, StatusCode.BAD_REQUEST)
     # 验证输入完整性
     if not check_input(login_name, login_pwd, phone_num, res):
         return  res
@@ -128,7 +141,7 @@ def login(kwargs):
                 return res 
             else:
                 # 保存token（根据netid pwd判断如果为新用户，则插入，否则则更新）
-                save_user(conn, login_name, login_pwd, phone_num, token)
+                save_user(conn, login_name, phone_num, token)
         #　利用学号和token验证
         else:
             if not check_token(conn, token, login_name, res): 
@@ -150,5 +163,5 @@ def login(kwargs):
         res['token'] = token
         res['data'] = q
         # 设置成功状态码
-        set_msg(res)
+        set_status(res, StatusCode.OK)
         return res 

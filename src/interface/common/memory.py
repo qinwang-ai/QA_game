@@ -283,6 +283,8 @@ class UserCache(Redis):
         防止重复刷同一道题
         """ 
 
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+    def get_cost_time(self, token):
+        """
+        获取总耗时
+        """
+        return round((time.time() - self._get_starttime(token)) / 60 , 2)

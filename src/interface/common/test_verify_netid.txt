@@ -1,0 +1,9 @@
+>>> from common.functions import verify_netid
+>>> res = {}
+>>> verify_netid('houyf', 'Beyond', res) # 错误的netid
+>>> print res['status']
+2
+>>> res = {}
+>>> verify_netid('houyf3', '7briB?ce', res) # 正确的netid
+>>> print res 
+{}

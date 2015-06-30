@@ -8,6 +8,10 @@ sys.setdefaultencoding('utf-8')
 sys.path.append('..')
 from config.enum import *
 from config.database import *
+from config.base import *
+def delete(conn, type):
+    sql = 'delete from question where `type`=%s'
+    return conn.execute(sql, type)
 
 def connect_to_db():
     import torndb
@@ -20,11 +24,11 @@ def connect_to_db():
 
 conn = connect_to_db()
 
-def insert(conn, options):
+def insert(conn, options, note):
     conn.execute('start transaction')
     type = QType.PINTU
-    sql = 'insert into question values(NULL, NULL, %s, NULL, NULL)'
-    conn.execute(sql, type)
+    sql = 'insert into question values(NULL, %s, %s, NULL, NULL)'
+    conn.execute(sql, str(note), type)
     sql = 'select max(q_id) as q_id from question'
     q_id = conn.get(sql).get('q_id')
     for opt in options:
@@ -34,9 +38,10 @@ def insert(conn, options):
 
 dirname = 'QA_games_images'
 sub_dirs = os.listdir(dirname)
-for dir in sub_dirs:
+delete(conn, type=QType.PINTU)
+for key, dir in enumerate(sub_dirs):
     files = os.listdir(dirname + os.sep + dir)
-    opts = map(lambda file: dirname+os.sep+dir+os.sep+file, files)
+    opts = map(lambda file: FILE_DOMAIN+os.sep+dirname+os.sep+dir+os.sep+file, files)
     print opts  
-    insert(conn, opts)
+    insert(conn, opts, key+1)
 
