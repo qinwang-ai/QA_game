@@ -42,7 +42,7 @@ function load_images( load_char_C){
 	json_str += '{"name":"'+'btn_right2'+'","path":'+'"images/btn_right2.png"},';
 	json_str += '{"name":"'+'btn_error2'+'","path":'+'"images/btn_error2.png"},';
 	json_str += '{"name":"'+'background_flash'+'","path":'+'"images/background_flash.png"},';
-	json_str += '{"name":"'+'background_foot'+'","path":'+'"images/background_foot.png"},';
+//	json_str += '{"name":"'+'background_foot'+'","path":'+'"images/background_foot.png"},';
 	json_str += '{"name":"'+'background_result'+'","path":'+'"images/background_result.png"},';
 	json_str += '{"name":"'+'btn_foucs'+'","path":'+'"images/btn_focus.png"},';
 	json_str += '{"name":"'+'btn_share'+'","path":'+'"images/btn_share.png"},';
@@ -369,6 +369,7 @@ function Part5_gaming(){
 	result_text1.text = Result.score;
 	result_text2.text = Result.cost_time;
 	result_text3.text = Result.hit_percent;
+	document.title = "中大毕业考，我打败了"+result_text3.text+"毕业僧，不服来战!";
 }
 function login_failed(){
 
