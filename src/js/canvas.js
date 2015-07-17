@@ -244,8 +244,6 @@ function gamelogin(){
 	psw.y = Math.round( global_height*0.36);
 	phone.x = Math.round( global_width*0.32);
 	phone.y = Math.round( global_height*0.45);
-	net_id.text = 'wangq49';
-	psw.text = 'Tsunami4377.';
 	phone.text = '1';
 
 	var inputLayer1 = new LSprite();
